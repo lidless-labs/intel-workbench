@@ -4,6 +4,8 @@
 
 Intel Workbench is a single-page React application with no backend dependencies. All intelligence analysis is performed client-side using Zustand state management and localStorage persistence.
 
+The application is organized as a library of Structured Analytic Techniques (SATs). ACH is the first technique shipped; Key Assumptions Check, Quality of Information Check, Indicators / Signposts of Change, Devil's Advocacy, Premortem Analysis, and Red Team Analysis are delivered across Phases 1-4 (see [ROADMAP.md](../ROADMAP.md)). Every SAT module reads and writes the same evidence/hypothesis substrate, surfaces a shared methodology citation panel, and feeds the same ICD 203 estimative-language overlay.
+
 ## Tech Stack
 
 ### Frontend Only
@@ -303,3 +305,30 @@ Max size: ~5MB (depends on browser). Good for 100-200 projects with hundreds of 
 - **Export:** <100ms for JSON, <500ms for Markdown
 
 Scoring is O(H * E) where H = hypotheses, E = evidence. Even large analyses complete in milliseconds.
+
+## Schema versioning
+
+Persistent state lives in three Zustand stores, each backed by `localStorage` via the `persist` middleware:
+
+- `useProjectStore` (key `intel-workbench-projects`)
+- `useDiamondStore` (key `intel-workbench-diamond`)
+- `useIOCStore` (key `intel-workbench-ioc`)
+
+Each store grows new fields as SATs are added (Key Assumptions Check adds `assumptions[]` to `ACHMatrix`, Quality of Information Check adds an optional `qoic` overlay to `Evidence`, Indicators / Signposts of Change adds `indicators[]` to `ACHMatrix`, and so on). To prevent persisted blobs from drifting out of sync with the in-memory shape, the project uses a single migration strategy:
+
+- A single `CURRENT_SCHEMA_VERSION` constant is exported from `src/types/index.ts`. Every phase that adds persisted fields bumps this constant.
+- Per-store `migrate` callbacks live in `src/store/migrations.ts` (`migrateProject`, `migrateDiamond`, `migrateIOC`). Each is registered through the relevant Zustand `persist` config's `version` and `migrate` options.
+- Pre-existing persisted blobs that lack a `schemaVersion` field are treated as version 1; the migration shim walks them forward to the current version one step at a time.
+- Migration coverage is enforced by tests in `src/store/__tests__/migrations.test.ts`. Every supported `from -> to` path has at least one test, and previous-version migrations remain in place when new versions are added.
+- Imported JSON exports flow through the same migration code path, so a file produced by an older build of the workbench upgrades cleanly on import.
+
+When a phase adds a new persisted field, the rule is: bump the constant, write a forward migration that fills the new field with a sensible default on legacy data, and add a migrations test before touching the UI.
+
+## Citation panel pattern
+
+Every SAT page renders a shared methodology citation block at the top of its workspace. The implementation has two pieces:
+
+- `src/components/shared/CitationPanel.tsx` is the reusable component. It accepts a `kind` prop identifying which SAT is being viewed (`'kac' | 'qoic' | 'indicators' | 'devils-advocacy' | 'premortem' | 'ach' | 'redteam'`) and renders a collapsed-by-default "Methodology" header that expands into the full citation block. Style mirrors the existing `card` pattern so the panel inherits theme tokens across all five visual variants.
+- `src/data/citations.ts` exports a single `CITATIONS` lookup keyed by SAT identifier. Each entry carries `{ title, primarySource, secondarySource, pageRange, summary, methodologyNote }`, with the primary source pointing at CIA's *A Tradecraft Primer for Intelligence Analysis* (Sherman Kent School, March 2009) and the secondary at the relevant chapter of Heuer & Pherson, *Structured Analytic Techniques for Intelligence Analysis*, 3rd ed. (CQ Press, 2020).
+
+The pattern keeps citations close to the technique they describe (rather than buried in the README or in tooltips), gives academic reviewers a deterministic place to look, and ensures each SAT can ship with its source material in one place. New SATs are added by appending a new entry to `CITATIONS` and rendering `<CitationPanel kind="..."/>` from the new page.

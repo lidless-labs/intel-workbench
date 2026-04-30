@@ -11,13 +11,31 @@
 
 # 🛡️ Solomon's Intel Workbench
 
-**Structured analytic techniques for cyber threat intelligence. Built for the modern analyst.**
-
-Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and five distinct visual themes.
+**A library of Structured Analytic Techniques (SATs) for cyber threat intelligence.** ACH, Key Assumptions Check, Quality of Information Check, Indicators of Change, Devil's Advocacy, Premortem, and Red Team — all sharing one evidence/hypothesis substrate. Anchored in CIA's *A Tradecraft Primer for Intelligence Analysis* (Sherman Kent School, March 2009) and Heuer & Pherson, *Structured Analytic Techniques for Intelligence Analysis*, 3rd ed. (CQ Press, 2020).
 
 > **Try it now → [intel-workbench.vercel.app](https://intel-workbench.vercel.app)**
 
 ![Intel Workbench dashboard](docs/screenshots/dashboard.png)
+
+---
+
+## SAT Library
+
+Intel Workbench ships seven Structured Analytic Techniques sharing a common evidence and hypothesis substrate. Each technique is grounded in a citable source (CIA's *Tradecraft Primer* and/or the Heuer & Pherson textbook) and surfaces that citation in-app via a shared methodology panel.
+
+| Tier | Technique | Citation | Status |
+|------|-----------|----------|--------|
+| Diagnostic | Key Assumptions Check | Tradecraft Primer pp. 7-9; Heuer & Pherson 3e ch. 8 | Phase 1 |
+| Diagnostic | Quality of Information Check | Tradecraft Primer pp. 11-13; Heuer & Pherson 3e ch. 9 | Phase 1 |
+| Diagnostic / Forward-looking | Indicators / Signposts of Change | Tradecraft Primer pp. 15-18; Heuer & Pherson 3e ch. 10 | Phase 2 |
+| Contrarian | Devil's Advocacy | Tradecraft Primer pp. 21-23; Heuer & Pherson 3e ch. 11 | Phase 3 |
+| Contrarian | Premortem Analysis | Tradecraft Primer pp. 25-27; Heuer & Pherson 3e ch. 11 | Phase 3 |
+| Contrarian | Analysis of Competing Hypotheses (ACH) | Tradecraft Primer pp. 29-32; Heuer & Pherson 3e ch. 7 | Shipped |
+| Imagination | Red Team Analysis | Tradecraft Primer pp. 35-38; Heuer & Pherson 3e ch. 12 | Phase 4 |
+
+All techniques persist in the same browser-local store and surface in the same evidence/hypothesis matrix, so an analyst can pivot from Key Assumptions Check into ACH into Devil's Advocacy without leaving the workspace or copying data between tools. ICD 203 estimative-language bands sit on top of every SAT as the universal write-up overlay.
+
+See [ROADMAP.md](ROADMAP.md) for the four-phase delivery plan.
 
 ---
 
@@ -207,19 +225,20 @@ curl -sL https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/en
 
 ---
 
-## 📊 ACH Methodology
+## 📊 Methodology
 
-**Analysis of Competing Hypotheses** (ACH) is a structured analytic technique developed by Richards J. Heuer Jr. at the CIA. Instead of seeking evidence to *confirm* a preferred hypothesis, ACH forces analysts to:
+Intel Workbench is organized as a library of Structured Analytic Techniques. The seven SATs are grouped by tier per CIA's *A Tradecraft Primer for Intelligence Analysis* (Sherman Kent School, March 2009):
 
-1. **Enumerate all reasonable hypotheses**
-2. **List all significant evidence and arguments**
-3. **Rate each evidence item against each hypothesis** as Consistent (C), Inconsistent (I), Neutral (N), or Not Applicable (NA)
-4. **Score inconsistencies** : the hypothesis with the *fewest* weighted inconsistencies is the most supported
-5. **Identify and mitigate cognitive biases** that might distort the analysis
+- **Diagnostic** techniques surface unstated premises and stress-test the inputs to an assessment. Key Assumptions Check and Quality of Information Check are the canonical pair.
+- **Forward-looking diagnostics** translate hypotheses into observable signals an analyst can watch for. Indicators / Signposts of Change is the workbench's bridge between IOC extraction and live hypothesis tracking.
+- **Contrarian** techniques challenge a preferred line of analysis. Devil's Advocacy, Premortem Analysis, and Analysis of Competing Hypotheses sit in this tier.
+- **Imagination** techniques model the adversary's perspective. Red Team Analysis is the lone imagination-tier SAT shipped here, anchored in the existing Diamond Model store.
 
-The key insight: **disprove rather than prove.** A single strong inconsistency can eliminate a hypothesis, while consistent evidence alone cannot confirm one.
+Every SAT page renders a shared citation panel pointing to the relevant *Tradecraft Primer* page range and Heuer & Pherson chapter. ICD 203 estimative-language bands ("almost no chance" through "almost certainly", per ODNI Analytic Standards) sit on top of every technique as the universal write-up overlay.
 
-### Scoring Formula
+### ACH Scoring Formula
+
+The Analysis of Competing Hypotheses module continues to use Richards J. Heuer Jr.'s weighted-inconsistency scoring:
 
 ```text
 Score = Σ (weight × rating_value)
@@ -230,7 +249,7 @@ where:
   multipliers:  High = 1.5, Medium = 1.0, Low = 0.5
 ```
 
-Lower (more negative) scores indicate stronger support. The hypothesis with the lowest score is flagged as **preferred**.
+Lower (more negative) scores indicate stronger support. The hypothesis with the lowest score is flagged as **preferred**. The key insight: **disprove rather than prove.** A single strong inconsistency can eliminate a hypothesis, while consistent evidence alone cannot confirm one.
 
 ---
 
