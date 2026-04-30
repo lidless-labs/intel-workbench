@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { Home, Grid3X3, Brain, Crosshair, Diamond, Download, BookOpen } from 'lucide-react';
+import { Home, Grid3X3, Brain, Crosshair, Diamond, Download, BookOpen, ListChecks, ShieldCheck } from 'lucide-react';
 import { HomePage } from './pages/HomePage';
 import { ACHPage } from './pages/ACHPage';
 import { BiasPage } from './pages/BiasPage';
@@ -8,6 +8,8 @@ import { IOCPage } from './pages/IOCPage';
 import { DiamondPage } from './pages/DiamondPage';
 import { ExportPage } from './pages/ExportPage';
 import { DocsPage } from './pages/DocsPage';
+import { KACPage } from './pages/KACPage';
+import { QoICPage } from './pages/QoICPage';
 
 export type RouteLabelVariant = 'default' | 'v1' | 'v2' | 'v3' | 'v4' | 'v5';
 
@@ -60,6 +62,38 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     id: 'ach-matrix',
     path: 'ach/:matrixId',
     element: <ACHPage />,
+  },
+  {
+    id: 'kac',
+    path: 'kac',
+    element: <KACPage />,
+    nav: {
+      icon: ListChecks,
+      labels: {
+        default: 'Key Assumptions',
+        v1: 'Key Assumptions',
+        v2: 'key_assumptions',
+        v3: 'Key Assumptions',
+        v4: 'ASSUMPTIONS',
+        v5: 'ASSUMPTIONS//AUDIT',
+      },
+    },
+  },
+  {
+    id: 'qoic',
+    path: 'qoic',
+    element: <QoICPage />,
+    nav: {
+      icon: ShieldCheck,
+      labels: {
+        default: 'Info Quality',
+        v1: 'Info Quality',
+        v2: 'info_quality',
+        v3: 'Info Quality',
+        v4: 'SOURCE QC',
+        v5: 'QOIC//AUDIT',
+      },
+    },
   },
   {
     id: 'bias',

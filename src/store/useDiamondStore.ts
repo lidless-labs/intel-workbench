@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { generateId } from '../utils/id';
+import { CURRENT_SCHEMA_VERSION } from '../types';
+import { migrateDiamondState } from './migrations';
 import type { ImportResult } from './useProjectStore';
 
 export interface AdversaryVertex {
@@ -380,6 +382,8 @@ export const useDiamondStore = create<DiamondStore>()(
     }),
     {
       name: 'intel-workbench-diamond',
+      version: CURRENT_SCHEMA_VERSION,
+      migrate: (persistedState, version) => migrateDiamondState(persistedState, version) as DiamondStore,
     }
   )
 );

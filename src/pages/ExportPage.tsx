@@ -84,6 +84,50 @@ export function ExportPage() {
       }
       lines.push('');
 
+      // Quality of Information Check (QoIC) sourcing detail per evidence row
+      const evidenceWithQoIC = matrix.evidence.filter((e) => e.qoic);
+      if (evidenceWithQoIC.length > 0) {
+        lines.push('### Sourcing (Quality of Information Check)');
+        lines.push('');
+        lines.push('*Tradecraft Primer pp. 11-13; Admiralty NATO AAP-6 reliability/accuracy.*');
+        lines.push('');
+        for (const e of evidenceWithQoIC) {
+          const desc = escapeCell(e.description).substring(0, 60);
+          const q = e.qoic!;
+          const code = [q.admiraltyReliability, q.admiraltyAccuracy].filter(Boolean).join('-') || 'unrated';
+          const bits: string[] = [`**${code}**`];
+          if (q.corroborated) bits.push('corroborated');
+          if (q.recencyDays !== undefined) bits.push(`${q.recencyDays}d old`);
+          if (q.sourceProvenance) bits.push(`provenance: ${escapeCell(q.sourceProvenance)}`);
+          lines.push(`- *${desc}* — ${bits.join(' · ')}`);
+          if (q.caveats) {
+            lines.push(`  - *Caveats:* ${escapeCell(q.caveats)}`);
+          }
+        }
+        lines.push('');
+      }
+
+      // Key Assumptions Check per matrix
+      if (matrix.assumptions.length > 0) {
+        lines.push('### Key Assumptions');
+        lines.push('');
+        lines.push('*Tradecraft Primer pp. 7-9; assumptions underpinning the analytic line.*');
+        lines.push('');
+        lines.push('| Assumption | Status | Linked Evidence | Rationale |');
+        lines.push('| --- | --- | --- | --- |');
+        const evidenceLookup = new Map(matrix.evidence.map((e) => [e.id, e]));
+        for (const a of matrix.assumptions) {
+          const text = escapeCell(a.text).substring(0, 80);
+          const status = escapeCell(a.status);
+          const linked = a.linkedEvidenceIds
+            .map((id) => evidenceLookup.get(id)?.description?.substring(0, 30) ?? id)
+            .join('; ');
+          const rationale = escapeCell(a.rationale).substring(0, 100);
+          lines.push(`| ${text} | ${status} | ${escapeCell(linked) || '—'} | ${rationale || '—'} |`);
+        }
+        lines.push('');
+      }
+
       lines.push('### Inconsistency Scores & Confidence');
       lines.push('');
       for (const h of matrix.hypotheses) {

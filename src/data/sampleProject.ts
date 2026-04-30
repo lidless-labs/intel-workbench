@@ -170,6 +170,37 @@ const sampleMatrix: ACHMatrix = {
   hypotheses,
   evidence,
   ratings,
+  assumptions: [
+    {
+      id: 'kac-sandworm-1',
+      text: 'Sandworm has not significantly altered its preferred TTPs (KillDisk-class wipers, BlackEnergy lineage tooling) since the 2017 NotPetya campaign.',
+      status: 'caveated',
+      rationale:
+        'Largely consistent with public reporting, but the 2022-2023 wave introduced novel CaddyWiper and Industroyer2 capabilities that suggest active capability development.',
+      linkedEvidenceIds: ['e5-blackenergy', 'e1-notpetya'],
+      createdAt: '2024-01-15T00:00:00.000Z',
+      updatedAt: '2024-01-15T00:00:00.000Z',
+    },
+    {
+      id: 'kac-sandworm-2',
+      text: 'Targeting of Ukrainian critical infrastructure is consistent with Russian state strategic interests and unlikely to be a false flag.',
+      status: 'supported',
+      rationale:
+        'Aligns with sustained Russian information-warfare doctrine; targeting profile, language artifacts, and infrastructure overlap with prior GRU-attributed activity.',
+      linkedEvidenceIds: ['e3-vpnfilter', 'e6-geopolitical'],
+      createdAt: '2024-01-15T00:00:00.000Z',
+      updatedAt: '2024-01-15T00:00:00.000Z',
+    },
+    {
+      id: 'kac-sandworm-3',
+      text: 'Cobalt Strike beaconing observed alongside Sandworm tooling indicates the same actor rather than a parallel intrusion set.',
+      status: 'unassessed',
+      rationale: '',
+      linkedEvidenceIds: [],
+      createdAt: '2024-01-15T00:00:00.000Z',
+      updatedAt: '2024-01-15T00:00:00.000Z',
+    },
+  ],
   createdAt: '2024-01-15T00:00:00.000Z',
   updatedAt: '2024-01-15T00:00:00.000Z',
 };

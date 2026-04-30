@@ -1,9 +1,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Project, ACHMatrix, Evidence, Hypothesis, ConsistencyRating, BiasChecklist } from '../types';
+import type {
+  Project,
+  ACHMatrix,
+  Evidence,
+  Hypothesis,
+  ConsistencyRating,
+  BiasChecklist,
+  KeyAssumption,
+} from '../types';
+import { CURRENT_SCHEMA_VERSION } from '../types';
 import { generateId } from '../utils/id';
 import { isProbabilityBand } from '../utils/icd203';
+import { isAdmiraltyAccuracy, isAdmiraltyReliability } from '../utils/admiralty';
 import { sampleProject } from '../data/sampleProject';
+import { migrateProjectState } from './migrations';
 
 export interface ImportResult {
   ok: boolean;
@@ -43,6 +54,12 @@ interface ProjectStore {
 
   // Ratings
   setRating: (projectId: string, matrixId: string, evidenceId: string, hypothesisId: string, rating: ConsistencyRating) => void;
+
+  // Key Assumptions Check (KAC)
+  addAssumption: (projectId: string, matrixId: string, text: string, rationale?: string) => string;
+  updateAssumption: (projectId: string, matrixId: string, assumptionId: string, updates: Partial<Pick<KeyAssumption, 'text' | 'status' | 'rationale' | 'linkedEvidenceIds'>>) => void;
+  removeAssumption: (projectId: string, matrixId: string, assumptionId: string) => void;
+  linkAssumptionEvidence: (projectId: string, matrixId: string, assumptionId: string, evidenceIds: string[]) => void;
 
   // Bias Checklist CRUD
   addBiasChecklist: (projectId: string, checklist: BiasChecklist) => void;
@@ -153,6 +170,7 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
   for (const re of rawEvs) {
     if (re && typeof re === 'object' && typeof (re as Record<string, unknown>).id === 'string') {
       const e = re as Record<string, unknown>;
+      const qoic = normalizeQoIC(e.qoic);
       evidence.push({
         id: e.id as string,
         description: typeof e.description === 'string' ? e.description : '',
@@ -160,8 +178,30 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
         credibility: validCredRel.has(e.credibility as string) ? (e.credibility as Evidence['credibility']) : 'Medium',
         relevance: validCredRel.has(e.relevance as string) ? (e.relevance as Evidence['relevance']) : 'Medium',
         attackTechniques: sanitizeTechniqueIds(e.attackTechniques),
+        ...(qoic ? { qoic } : {}),
       });
     }
+  }
+
+  // Normalize assumptions (KAC)
+  const rawAssumptions = Array.isArray(obj.assumptions) ? obj.assumptions : [];
+  const assumptions: KeyAssumption[] = [];
+  const assumptionStatuses = new Set(['supported', 'unsupported', 'caveated', 'unassessed']);
+  for (const ra of rawAssumptions) {
+    if (!ra || typeof ra !== 'object') continue;
+    const a = ra as Record<string, unknown>;
+    const text = typeof a.text === 'string' ? a.text : '';
+    if (!text.trim()) continue;
+    const id = typeof a.id === 'string' && a.id.trim() ? (a.id as string) : generateId();
+    const status = assumptionStatuses.has(a.status as string)
+      ? (a.status as KeyAssumption['status'])
+      : 'unassessed';
+    const rationale = typeof a.rationale === 'string' ? a.rationale : '';
+    const linkedRaw = Array.isArray(a.linkedEvidenceIds) ? a.linkedEvidenceIds : [];
+    const linkedEvidenceIds = linkedRaw.filter((v): v is string => typeof v === 'string');
+    const aCreated = typeof a.createdAt === 'string' ? a.createdAt : fallbackTime;
+    const aUpdated = typeof a.updatedAt === 'string' ? a.updatedAt : fallbackTime;
+    assumptions.push({ id, text, status, rationale, linkedEvidenceIds, createdAt: aCreated, updatedAt: aUpdated });
   }
 
   // Build valid ID sets
@@ -193,9 +233,39 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
     hypotheses,
     evidence,
     ratings,
+    assumptions,
     createdAt,
     updatedAt,
   };
+}
+
+function normalizeQoIC(raw: unknown): Evidence['qoic'] {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const obj = raw as Record<string, unknown>;
+  const reliability = isAdmiraltyReliability(obj.admiraltyReliability)
+    ? obj.admiraltyReliability
+    : undefined;
+  const accuracy = isAdmiraltyAccuracy(obj.admiraltyAccuracy)
+    ? obj.admiraltyAccuracy
+    : undefined;
+  const corroborated = typeof obj.corroborated === 'boolean' ? obj.corroborated : false;
+  const sourceProvenance = typeof obj.sourceProvenance === 'string' ? obj.sourceProvenance : '';
+  const recencyDays =
+    typeof obj.recencyDays === 'number' && Number.isFinite(obj.recencyDays)
+      ? obj.recencyDays
+      : undefined;
+  const caveats = typeof obj.caveats === 'string' ? obj.caveats : '';
+  if (
+    !reliability &&
+    !accuracy &&
+    !corroborated &&
+    !sourceProvenance &&
+    recencyDays === undefined &&
+    !caveats
+  ) {
+    return undefined;
+  }
+  return { admiraltyReliability: reliability, admiraltyAccuracy: accuracy, corroborated, sourceProvenance, recencyDays, caveats };
 }
 
 function normalizeChecklist(raw: unknown, fallbackTime: string): BiasChecklist | null {
@@ -318,6 +388,7 @@ export const useProjectStore = create<ProjectStore>()(
           hypotheses: [],
           evidence: [],
           ratings: {},
+          assumptions: [],
           createdAt: now,
           updatedAt: now,
         };
@@ -526,6 +597,104 @@ export const useProjectStore = create<ProjectStore>()(
         }));
       },
 
+      // Key Assumptions Check operations
+      addAssumption: (projectId, matrixId, text, rationale) => {
+        const id = generateId();
+        const now = new Date().toISOString();
+        const assumption: KeyAssumption = {
+          id,
+          text,
+          status: 'unassessed',
+          rationale: rationale ?? '',
+          linkedEvidenceIds: [],
+          createdAt: now,
+          updatedAt: now,
+        };
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  achMatrices: p.achMatrices.map((m) =>
+                    m.id === matrixId
+                      ? updateMatrixTimestamp({ ...m, assumptions: [...m.assumptions, assumption] })
+                      : m
+                  ),
+                })
+              : p
+          ),
+        }));
+        return id;
+      },
+
+      updateAssumption: (projectId, matrixId, assumptionId, updates) => {
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  achMatrices: p.achMatrices.map((m) =>
+                    m.id === matrixId
+                      ? updateMatrixTimestamp({
+                          ...m,
+                          assumptions: m.assumptions.map((a) =>
+                            a.id === assumptionId
+                              ? { ...a, ...updates, updatedAt: new Date().toISOString() }
+                              : a
+                          ),
+                        })
+                      : m
+                  ),
+                })
+              : p
+          ),
+        }));
+      },
+
+      removeAssumption: (projectId, matrixId, assumptionId) => {
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  achMatrices: p.achMatrices.map((m) =>
+                    m.id === matrixId
+                      ? updateMatrixTimestamp({
+                          ...m,
+                          assumptions: m.assumptions.filter((a) => a.id !== assumptionId),
+                        })
+                      : m
+                  ),
+                })
+              : p
+          ),
+        }));
+      },
+
+      linkAssumptionEvidence: (projectId, matrixId, assumptionId, evidenceIds) => {
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  achMatrices: p.achMatrices.map((m) =>
+                    m.id === matrixId
+                      ? updateMatrixTimestamp({
+                          ...m,
+                          assumptions: m.assumptions.map((a) =>
+                            a.id === assumptionId
+                              ? { ...a, linkedEvidenceIds: evidenceIds, updatedAt: new Date().toISOString() }
+                              : a
+                          ),
+                        })
+                      : m
+                  ),
+                })
+              : p
+          ),
+        }));
+      },
+
       // Bias Checklist operations
       addBiasChecklist: (projectId, checklist) => {
         set((state) => ({
@@ -633,6 +802,8 @@ export const useProjectStore = create<ProjectStore>()(
     }),
     {
       name: 'intel-workbench-projects',
+      version: CURRENT_SCHEMA_VERSION,
+      migrate: (persistedState, version) => migrateProjectState(persistedState, version) as ProjectStore,
     }
   )
 );

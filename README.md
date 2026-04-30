@@ -11,7 +11,7 @@
 
 # 🛡️ Solomon's Intel Workbench
 
-**A library of Structured Analytic Techniques (SATs) for cyber threat intelligence.** ACH, Key Assumptions Check, Quality of Information Check, Indicators of Change, Devil's Advocacy, Premortem, and Red Team — all sharing one evidence/hypothesis substrate. Anchored in CIA's *A Tradecraft Primer for Intelligence Analysis* (Sherman Kent School, March 2009) and Heuer & Pherson, *Structured Analytic Techniques for Intelligence Analysis*, 3rd ed. (CQ Press, 2020).
+**A library of Structured Analytic Techniques (SATs) for cyber threat intelligence.** ACH, Key Assumptions Check, Quality of Information Check, Indicators of Change, Devil's Advocacy, Premortem, and Red Team - all sharing one evidence/hypothesis substrate. Anchored in CIA's *A Tradecraft Primer for Intelligence Analysis* (Sherman Kent School, March 2009) and Heuer & Pherson, *Structured Analytic Techniques for Intelligence Analysis*, 3rd ed. (CQ Press, 2020).
 
 > **Try it now → [intel-workbench.vercel.app](https://intel-workbench.vercel.app)**
 

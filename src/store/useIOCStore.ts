@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { CURRENT_SCHEMA_VERSION } from '../types';
+import { migrateIOCState } from './migrations';
 
 export type IOCType = 'ipv4' | 'ipv6' | 'domain' | 'url' | 'email' | 'md5' | 'sha1' | 'sha256' | 'cve';
 
@@ -214,6 +216,8 @@ export const useIOCStore = create<IOCStore>()(
     }),
     {
       name: 'intel-workbench-ioc',
+      version: CURRENT_SCHEMA_VERSION,
+      migrate: (persistedState, version) => migrateIOCState(persistedState, version) as IOCStore,
     }
   )
 );

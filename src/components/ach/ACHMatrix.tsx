@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import type { ACHMatrix as ACHMatrixType, ConsistencyRating, Evidence, Hypothesis, ConfidenceLevel, ProbabilityBand } from '../../types';
 import { useProjectStore } from '../../store/useProjectStore';
+import { AssumptionAuditBanner } from '../kac/AssumptionAuditBanner';
+import { QoICSummary } from '../qoic/QoICSummary';
 import {
   calculateAllScores,
   findPreferredHypothesis,
@@ -246,6 +248,9 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
 
   return (
     <div className="space-y-4">
+      {/* Key Assumptions audit banner */}
+      <AssumptionAuditBanner matrix={matrix} />
+
       {/* Toolbar */}
       <div className="flex items-center gap-3">
         <button onClick={() => setShowAddHypothesis(true)} className="btn-secondary text-xs">
@@ -495,6 +500,9 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         </p>
                       )}
                       <p className="text-xxs font-mono mt-1" style={{color: "var(--iw-text-muted)"}}>{e.source}</p>
+                      <div className="mt-1">
+                        <QoICSummary qoic={e.qoic} />
+                      </div>
                       {e.attackTechniques && e.attackTechniques.length > 0 && (
                         <div className="mt-1.5">
                           <TechniqueChips
