@@ -65,7 +65,7 @@ export function BiasPage() {
           <Brain size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
           <h3 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Bias Checklist Yet</h3>
           <p className="text-sm mb-6 max-w-md mx-auto" style={{color: "var(--iw-text-muted)"}}>
-            Create a cognitive bias checklist based on Heuer &amp; Pherson's taxonomy to ensure
+            Create a cognitive bias checklist based on Heuer &amp; Pherson&apos;s taxonomy to ensure
             analytical rigor and mitigate common thinking traps.
           </p>
           <button onClick={handleCreateChecklist} className="btn-primary">
@@ -89,7 +89,7 @@ export function BiasPage() {
         </span>
       </div>
       <p className="text-sm" style={{color: "var(--iw-text-muted)"}}>
-        Review each bias below. Check it off once you've considered whether it applies to your
+        Review each bias below. Check it off once you&apos;ve considered whether it applies to your
         current analysis. Expand any item to view or edit mitigation notes.
       </p>
       <BiasChecklist

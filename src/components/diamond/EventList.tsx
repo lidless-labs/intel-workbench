@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Plus, Trash2, Clock } from 'lucide-react';
 import { useDiamondStore, type DiamondEvent } from '../../store/useDiamondStore';
 
@@ -19,7 +19,7 @@ export function EventList() {
     setShowForm(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: ReactKeyboardEvent) => {
     if (e.key === 'Enter') handleCreate();
     if (e.key === 'Escape') {
       setShowForm(false);

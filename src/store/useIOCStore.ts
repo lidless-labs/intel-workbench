@@ -83,7 +83,7 @@ const PATTERNS: { type: IOCType; regex: RegExp }[] = [
   // Email
   {
     type: 'email',
-    regex: /[a-zA-Z0-9._%+\-]+(?:@|\[at\])[a-zA-Z0-9.\-]+(?:\[\.\]|\.)[a-zA-Z]{2,}/gi,
+    regex: /[a-zA-Z0-9._%+-]+(?:@|\[at\])[a-zA-Z0-9.-]+(?:\[\.\]|\.)[a-zA-Z]{2,}/gi,
   },
   // CVE
   {
@@ -118,7 +118,7 @@ const PATTERNS: { type: IOCType; regex: RegExp }[] = [
   // Domains (including defanged)
   {
     type: 'domain',
-    regex: /\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(?:\[\.\]|\.))+(?:com|net|org|edu|gov|mil|io|co|info|biz|me|tv|cc|ru|cn|de|uk|fr|br|in|jp|au|ca|nl|se|ch|es|it|pl|za|kr|tw|xyz|top|club|online|site|tech|space|pro|app|dev)\b/gi,
+    regex: /\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\[\.\]|\.))+(?:com|net|org|edu|gov|mil|io|co|info|biz|me|tv|cc|ru|cn|de|uk|fr|br|in|jp|au|ca|nl|se|ch|es|it|pl|za|kr|tw|xyz|top|club|online|site|tech|space|pro|app|dev)\b/gi,
   },
 ];
 

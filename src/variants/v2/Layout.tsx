@@ -24,7 +24,7 @@ export default function TerminalLayout() {
   const navigate = useNavigate();
   const navItems = getNavRoutes('v2', '/v2');
   const [uptimeSeconds, setUptimeSeconds] = useState(() => Math.floor(Date.now() / 1000));
-  const sessionId = useMemo(() => Math.random().toString(36).slice(2, 10).toUpperCase(), []);
+  const [sessionId] = useState(() => Math.random().toString(36).slice(2, 10).toUpperCase());
   const initialTimestamp = useMemo(() => new Date().toISOString(), []);
 
   useEffect(() => {

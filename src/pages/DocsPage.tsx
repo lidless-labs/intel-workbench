@@ -108,7 +108,7 @@ export function DocsPage() {
               <div>
                 <strong style={{ color: theme.text }}>Add hypotheses</strong>
                 <p className="mt-1">
-                  In the ACH Matrix page, click <em>"+ Hypothesis"</em> to add competing
+                  In the ACH Matrix page, click <em>&quot;+ Hypothesis&quot;</em> to add competing
                   explanations. These become the columns of your matrix.
                 </p>
               </div>
@@ -123,8 +123,8 @@ export function DocsPage() {
               <div>
                 <strong style={{ color: theme.text }}>Add evidence</strong>
                 <p className="mt-1">
-                  Click <em>"+ Evidence"</em> to add indicators, facts, or arguments. Set each
-                  item's source, credibility (High/Medium/Low), and relevance (High/Medium/Low).
+                  Click <em>&quot;+ Evidence&quot;</em> to add indicators, facts, or arguments. Set each
+                  item&apos;s source, credibility (High/Medium/Low), and relevance (High/Medium/Low).
                   These become the rows of your matrix.
                 </p>
               </div>
@@ -173,7 +173,7 @@ export function DocsPage() {
                 <strong style={{ color: theme.text }}>Check for biases</strong>
                 <p className="mt-1">
                   Navigate to the Bias Checklist page. Review each cognitive bias and consider
-                  whether it might be affecting your analysis. Check off biases you've accounted
+                  whether it might be affecting your analysis. Check off biases you&apos;ve accounted
                   for and add mitigation notes.
                 </p>
               </div>
@@ -205,7 +205,7 @@ export function DocsPage() {
         <>
           <p className="text-sm leading-relaxed" style={{ color: theme.textMuted }}>
             Intel Workbench uses a weighted inconsistency scoring system. Each evidence-hypothesis
-            rating is converted to a numeric value and multiplied by the evidence's credibility
+            rating is converted to a numeric value and multiplied by the evidence&apos;s credibility
             and relevance weights.
           </p>
 
@@ -319,7 +319,7 @@ export function DocsPage() {
                 <li>• <strong style={{ color: theme.text }}>Confirmation Bias</strong> — Seeking info that confirms existing beliefs</li>
                 <li>• <strong style={{ color: theme.text }}>Availability Heuristic</strong> — Judging likelihood by ease of recall</li>
                 <li>• <strong style={{ color: theme.text }}>Vividness Bias</strong> — Overweighting dramatic events</li>
-                <li>• <strong style={{ color: theme.text }}>Hindsight Bias</strong> — "I knew it all along" effect</li>
+                <li>• <strong style={{ color: theme.text }}>Hindsight Bias</strong> — &quot;I knew it all along&quot; effect</li>
                 <li>• <strong style={{ color: theme.text }}>Proportionality Bias</strong> — Assuming big effects need big causes</li>
               </ul>
             </div>
@@ -329,7 +329,7 @@ export function DocsPage() {
               </h4>
               <ul className="space-y-1 text-sm" style={{ color: theme.textMuted }}>
                 <li>• <strong style={{ color: theme.text }}>Mirror-Imaging</strong> — Assuming adversaries think like us</li>
-                <li>• <strong style={{ color: theme.text }}>Satisficing</strong> — Accepting the first "good enough" explanation</li>
+                <li>• <strong style={{ color: theme.text }}>Satisficing</strong> — Accepting the first &quot;good enough&quot; explanation</li>
                 <li>• <strong style={{ color: theme.text }}>Premature Closure</strong> — Concluding before all evidence is examined</li>
                 <li>• <strong style={{ color: theme.text }}>Denial of Change</strong> — Assuming patterns will continue unchanged</li>
               </ul>

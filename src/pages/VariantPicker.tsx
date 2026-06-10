@@ -77,7 +77,7 @@ export function VariantPicker() {
         <div className="flex items-center justify-center gap-3 mb-4">
           <Shield size={36} className="text-cyan-400" />
           <h1 className="text-3xl font-bold text-white tracking-tight">
-            Solomon's Intel Workbench
+            Solomon&apos;s Intel Workbench
           </h1>
         </div>
         <p className="text-sm max-w-lg mx-auto" style={{color: "var(--iw-text-muted)"}}>

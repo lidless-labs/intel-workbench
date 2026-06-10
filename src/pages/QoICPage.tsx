@@ -66,7 +66,7 @@ export function QoICPage() {
         </div>
       ) : rows.length === 0 ? (
         <div className="card p-6 text-center text-sm" style={{ color: 'var(--iw-text-muted)' }}>
-          No evidence rows recorded yet across this project's matrices.
+          No evidence rows recorded yet across this project&apos;s matrices.
         </div>
       ) : (
         <>

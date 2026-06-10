@@ -24,6 +24,7 @@ export function ExportPage() {
   const [importText, setImportText] = useState('');
   const [importError, setImportError] = useState('');
   const [importSuccess, setImportSuccess] = useState(false);
+  const [copyError, setCopyError] = useState('');
 
   if (!project) {
     return (
@@ -190,8 +191,6 @@ export function ExportPage() {
   const getExportContent = (): string => {
     return exportFormat === 'json' ? generateJSON() : generateMarkdown();
   };
-
-  const [copyError, setCopyError] = useState('');
 
   const handleCopy = async () => {
     const content = getExportContent();
