@@ -18,3 +18,7 @@ PHASE4_SPEC.md
 .codex/
 .learnings/
 .vercel
+
+# Local brigade memory (cards are local-only, never committed)
+/memory/
+.brigade/
