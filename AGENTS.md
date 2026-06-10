@@ -1,16 +1,12 @@
 # Repository Guidance
 
 ## Definition of Done
-A change is done only when ALL of these pass locally, in this order (same as CI, `.github/workflows/ci.yml`):
-
 ```
-npm run typecheck
-npm run lint
-npm test
-npm run build
+./scripts/verify
 ```
+This runs typecheck, lint, tests, and build in CI order (same as `.github/workflows/ci.yml`).
 
-Run them and report the actual results. If any command fails, report the failure output verbatim and do not claim success. Never describe a change as complete, green, or working without having run these in this session.
+A change is done only when the verify script passes locally. Run it and report the actual results. If any command fails, report the failure output verbatim and do not claim success. Never describe a change as complete, green, or working without having run these in this session.
 
 ## Project Shape (verified facts)
 - Single-page React 18 + TypeScript app: a library of Structured Analytic Techniques (ACH, Key Assumptions Check, Quality of Information Check, plus planned SATs) for cyber threat intelligence. No backend. All user state lives in localStorage, on the user's machine only.
