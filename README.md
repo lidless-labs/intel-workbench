@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/repo-images/executive-threat-estimate.jpg" alt="Intel Workbench executive threat estimate banner">
+  <img src="docs/assets/intel-workbench-banner.jpg" alt="intel-workbench banner" width="900">
 </p>
 
 <h1 align="center">Intel Workbench</h1>
@@ -9,20 +9,55 @@
 </p>
 
 <p align="center">
-  <a href="https://intel-workbench.vercel.app"><img src="https://img.shields.io/badge/live_demo-intel--workbench.vercel.app-22c55e?style=for-the-badge&logo=vercel&logoColor=white" alt="Live demo"></a>
-  <img src="https://img.shields.io/github/actions/workflow/status/solomonneas/intel-workbench/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white" alt="CI status">
+  <a href="https://intel-workbench.vercel.app">Live demo</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/actions/workflow/status/lidless-labs/intel-workbench/ci.yml?branch=main&style=for-the-badge&label=ci" alt="CI status">
   <img src="https://img.shields.io/badge/react-18-61DAFB?style=for-the-badge&logo=react&logoColor=0b1020" alt="React 18">
   <img src="https://img.shields.io/badge/typescript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5">
   <img src="https://img.shields.io/badge/vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7">
-  <img src="https://img.shields.io/badge/tailwind_css-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 3">
-  <img src="https://img.shields.io/badge/zustand-4-facc15?style=for-the-badge" alt="Zustand 4">
-  <img src="https://img.shields.io/badge/vitest-2-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest 2">
-  <img src="https://img.shields.io/badge/MITRE_ATT%26CK-local_dataset-7c3aed?style=for-the-badge" alt="MITRE ATT&CK local dataset">
-  <img src="https://img.shields.io/badge/ICD_203-estimative_language-0f766e?style=for-the-badge" alt="ICD 203 estimative language">
   <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License">
 </p>
 
 Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and eight distinct visual themes.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** ≥ 18
+- **npm** ≥ 9
+
+### Install & Run
+
+```bash
+git clone https://github.com/lidless-labs/intel-workbench.git
+cd intel-workbench
+npm install
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### Build for Production
+
+```bash
+npm run build
+npm run preview
+```
+
+### Run Tests
+
+```bash
+npm test         # vitest, single run
+npm run test:watch
+npm run typecheck
+```
+
+CI runs typecheck + tests + production build on every push (`.github/workflows/ci.yml`).
 
 ---
 
@@ -60,43 +95,6 @@ Browser
 - **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/v8/*`, `/default/*`) and a variant picker at `/`
 - **Theming:** `ThemeContext` provides color tokens per variant; components read them via `useTheme()`
 - **Code Splitting:** Variant layouts are `React.lazy()` loaded to keep the initial bundle small
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Node.js** ≥ 18
-- **npm** ≥ 9
-
-### Install & Run
-
-```bash
-git clone https://github.com/solomonneas/intel-workbench.git
-cd intel-workbench
-npm install
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-### Build for Production
-
-```bash
-npm run build
-npm run preview
-```
-
-### Run Tests
-
-```bash
-npm test         # vitest, single run
-npm run test:watch
-npm run typecheck
-```
-
-CI runs typecheck + tests + production build on every push (`.github/workflows/ci.yml`).
 
 ---
 
