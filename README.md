@@ -24,7 +24,7 @@ Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool th
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -61,7 +61,7 @@ CI runs typecheck + tests + production build on every push (`.github/workflows/c
 
 ---
 
-## ✨ Features
+## Features
 
 - **ACH Matrix** : Interactive evidence-vs-hypothesis grid with consistency ratings (C/I/N/NA), weighted scoring, and automatic preferred-hypothesis identification
 - **MITRE ATT&CK Tagging** : Tag evidence and hypotheses with techniques from the Enterprise ATT&CK matrix (691 techniques, 14 tactics). Searchable by ID, name, or tactic. Vendored locally so the workbench stays offline-first
@@ -78,14 +78,14 @@ CI runs typecheck + tests + production build on every push (`.github/workflows/c
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Intel Workbench is a **single-page React application** with no backend dependencies:
 
 ```
 Browser
   └─ React 18 (SPA, React Router v6)
-       ├─ Zustand Store ← persist middleware → localStorage
+       ├─ Zustand Store  persist middleware  localStorage
        ├─ ThemeContext (per-variant color tokens)
        ├─ Pages: Home / ACH / Bias / Export / Docs
        └─ 8 Variant Layouts (lazy-loaded)
@@ -98,7 +98,7 @@ Browser
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
@@ -113,7 +113,7 @@ Browser
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 intel-workbench/
@@ -170,38 +170,8 @@ intel-workbench/
 
 ---
 
-## 🎨 8 Variants
 
-Each variant wraps the same core pages in a unique visual identity:
-
-| Variant | Theme | Aesthetic |
-|---------|-------|-----------|
-| **v1 : Langley** | Intelligence Agency | Dark navy, gold accents, serif type, classified stamps |
-| **v2 : Terminal** | Hacker / OSINT | Pure black, matrix green, scanline overlay, monospace |
-| **v3 : Analyst's Desk** | Clean Professional | Light backgrounds, blue accents, content-first layout |
-| **v4 : Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
-| **v5 : Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
-| **v6 : Casefile Atlas** | Evidence Desk | Warm paper, red-thread evidence board, serif-heavy dossiers |
-| **v7 : Ops Floor** | Live Cell | Dense command-center layout, teal signal lines, amber status blocks |
-| **v8 : Blacksite Minimal** | Brutalist | Severe monochrome, acid-lime emphasis, hard-edged controls |
-
-<p align="center">
-  <img src="docs/screenshots/variant-v1-langley.png" width="49%" alt="Langley variant" />
-  <img src="docs/screenshots/variant-v2-terminal.png" width="49%" alt="Terminal variant" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/variant-v3-analysts-desk.png" width="49%" alt="Analyst's Desk variant" />
-  <img src="docs/screenshots/variant-v4-stratcom.png" width="49%" alt="Stratcom variant" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/variant-v5-cyber-noir.png" width="60%" alt="Cyber Noir variant" />
-</p>
-
-All variants share the same Zustand store and page components. Switching themes is instant : just navigate back to the variant picker at `/`.
-
----
-
-## 🎯 MITRE ATT&CK Integration
+## MITRE ATT&CK Integration
 
 Tag evidence and hypotheses with techniques from the **MITRE ATT&CK Enterprise** matrix. Search by technique ID (`T1059`), name (`Phishing`), or filter by tactic (Initial Access, Execution, Lateral Movement, …). Tags persist in JSON exports and are rendered as clickable references in Markdown reports.
 
@@ -216,7 +186,7 @@ curl -sL https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/en
 
 ---
 
-## 📊 ACH Methodology
+## ACH Methodology
 
 **Analysis of Competing Hypotheses** (ACH) is a structured analytic technique developed by Richards J. Heuer Jr. at the CIA. Instead of seeking evidence to *confirm* a preferred hypothesis, ACH forces analysts to:
 
@@ -243,6 +213,6 @@ Lower (more negative) scores indicate stronger support. The hypothesis with the 
 
 ---
 
-## 📄 License
+## License
 
 MIT : see [LICENSE](LICENSE) for details.

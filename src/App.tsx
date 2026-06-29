@@ -1,17 +1,6 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { AppShell } from './components/layout/AppShell';
-import { ThemeProvider, ThemeModeProvider, useThemeMode } from './contexts/ThemeContext';
-import { APP_ROUTES } from './routes';
 
-const V1Layout = lazy(() => import('./variants/v1/Layout'));
-const V2Layout = lazy(() => import('./variants/v2/Layout'));
-const V3Layout = lazy(() => import('./variants/v3/Layout'));
-const V4Layout = lazy(() => import('./variants/v4/Layout'));
-const V5Layout = lazy(() => import('./variants/v5/Layout'));
-const V6Layout = lazy(() => import('./variants/v6/Layout'));
-const V7Layout = lazy(() => import('./variants/v7/Layout'));
-const V8Layout = lazy(() => import('./variants/v8/Layout'));
+const AnalystDeskLayout = lazy(() => import('./variants/v3/Layout'));
 
 function LoadingFallback() {
   return (
@@ -25,62 +14,17 @@ function LoadingFallback() {
           style={{ borderColor: 'var(--iw-accent)', borderTopColor: 'transparent' }}
         />
         <p className="text-sm font-mono" style={{ color: 'var(--iw-text-muted)' }}>
-          Loading variant...
+          Loading...
         </p>
       </div>
     </div>
   );
 }
 
-function AppRoutes() {
-  return (
-    <Routes>
-      {APP_ROUTES.map((route) => (
-        <Route
-          key={route.id}
-          index={route.index}
-          path={route.path}
-          element={route.element}
-        />
-      ))}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-  );
-}
-
-function DefaultLayoutContent() {
-  const { theme } = useThemeMode();
-  return (
-    <ThemeProvider theme={theme}>
-      <AppShell>
-        <AppRoutes />
-      </AppShell>
-    </ThemeProvider>
-  );
-}
-
-function DefaultLayout() {
-  return (
-    <ThemeModeProvider>
-      <DefaultLayoutContent />
-    </ThemeModeProvider>
-  );
-}
-
 function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <Routes>
-        <Route path="/v1/*" element={<V1Layout />} />
-        <Route path="/v2/*" element={<V2Layout />} />
-        <Route path="/v3/*" element={<V3Layout />} />
-        <Route path="/v4/*" element={<V4Layout />} />
-        <Route path="/v5/*" element={<V5Layout />} />
-        <Route path="/v6/*" element={<V6Layout />} />
-        <Route path="/v7/*" element={<V7Layout />} />
-        <Route path="/v8/*" element={<V8Layout />} />
-        <Route path="/*" element={<DefaultLayout />} />
-      </Routes>
+      <AnalystDeskLayout />
     </Suspense>
   );
 }

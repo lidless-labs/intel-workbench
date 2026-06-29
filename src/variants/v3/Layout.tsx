@@ -1,5 +1,5 @@
-import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Shield, ArrowLeft } from 'lucide-react';
+import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { Shield } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
 import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
@@ -20,8 +20,7 @@ const THEME: ThemeColors = {
 export default function AnalystDeskLayout() {
   const activeProject = useProjectStore((s) => s.getActiveProject());
   const location = useLocation();
-  const navigate = useNavigate();
-  const navItems = getNavRoutes('v3', '/v3');
+  const navItems = getNavRoutes('v3', '');
 
   return (
     <ThemeProvider theme={THEME}>
@@ -92,7 +91,7 @@ export default function AnalystDeskLayout() {
               const Icon = item.icon;
               const isActive =
                 item.id === 'home'
-                  ? location.pathname === '/v3' || location.pathname === '/v3/'
+                  ? location.pathname === '/'
                   : location.pathname.startsWith(item.to);
 
               return (
@@ -126,15 +125,6 @@ export default function AnalystDeskLayout() {
                 {activeProject.name}
               </span>
             )}
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-1 text-xs transition-colors"
-              style={{ color: THEME.textMuted }}
-              data-tour="variant-picker"
-            >
-              <ArrowLeft size={14} />
-              <span>Themes</span>
-            </button>
           </div>
         </header>
 
