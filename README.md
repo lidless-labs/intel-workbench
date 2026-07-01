@@ -13,11 +13,11 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/actions/workflow/status/lidless-labs/intel-workbench/ci.yml?branch=main&style=for-the-badge&label=ci" alt="CI status">
-  <img src="https://img.shields.io/badge/react-18-61DAFB?style=for-the-badge&logo=react&logoColor=0b1020" alt="React 18">
-  <img src="https://img.shields.io/badge/typescript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5">
-  <img src="https://img.shields.io/badge/vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7">
-  <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License">
+  <img src="https://shieldcn.dev/github/ci/lidless-labs/intel-workbench.svg?branch=main&workflow=ci.yml" alt="CI status">
+  <img src="https://shieldcn.dev/badge/react-18-61DAFB.svg?logo=react&logoColor=0b1020" alt="React 18">
+  <img src="https://shieldcn.dev/badge/typescript-5-3178C6.svg?logo=typescript&logoColor=white" alt="TypeScript 5">
+  <img src="https://shieldcn.dev/badge/vite-7-646CFF.svg?logo=vite&logoColor=white" alt="Vite 7">
+  <img src="https://shieldcn.dev/badge/license-MIT-green.svg" alt="MIT License">
 </p>
 
 Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and eight distinct visual themes.
