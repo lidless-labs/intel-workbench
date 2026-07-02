@@ -2,7 +2,6 @@ import { type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Shield, ChevronRight, Sun, Moon } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
-import { useBasePath } from '../../utils/useBasePath';
 import { GuidedTour, TakeTourButton } from '../GuidedTour';
 import { useThemeMode } from '../../contexts/ThemeContext';
 import { getNavRoutes } from '../../routes';
@@ -14,9 +13,8 @@ interface AppShellProps {
 export function AppShell({ children }: AppShellProps) {
   const activeProject = useProjectStore((s) => s.getActiveProject());
   const location = useLocation();
-  const basePath = useBasePath();
   const { mode, toggleMode } = useThemeMode();
-  const navItems = getNavRoutes('default', basePath);
+  const navItems = getNavRoutes();
 
   return (
     <div className="flex h-screen overflow-hidden transition-colors duration-200">
@@ -53,9 +51,9 @@ export function AppShell({ children }: AppShellProps) {
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isHome = item.to === `${basePath}/`;
+            const isHome = item.to === '/';
             const isActive = isHome
-              ? location.pathname === `${basePath}` || location.pathname === `${basePath}/`
+              ? location.pathname === '/'
               : location.pathname.startsWith(item.to);
 
             return (
@@ -116,6 +114,7 @@ export function AppShell({ children }: AppShellProps) {
           <div className="flex items-center gap-3">
             <button
               onClick={toggleMode}
+              data-tour="theme-toggle"
               className="p-1.5 rounded-lg transition-colors duration-200 hover:opacity-80"
               style={{ color: 'var(--iw-text-muted)' }}
               title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}

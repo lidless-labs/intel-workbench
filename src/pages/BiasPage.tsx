@@ -4,12 +4,10 @@ import { useProjectStore } from '../store/useProjectStore';
 import { BiasChecklist } from '../components/bias/BiasChecklist';
 import { createDefaultBiases } from '../data/biasData';
 import { generateId } from '../utils/id';
-import { useBasePath } from '../utils/useBasePath';
 
 export function BiasPage() {
   const store = useProjectStore();
   const navigate = useNavigate();
-  const basePath = useBasePath();
   const project = store.getActiveProject();
 
   if (!project) {
@@ -21,7 +19,7 @@ export function BiasPage() {
           <p className="text-sm mb-4" style={{color: "var(--iw-text-muted)"}}>
             Select or create a project to begin bias review.
           </p>
-          <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
+          <button onClick={() => navigate('/')} className="btn-primary">
             Go to Projects
           </button>
         </div>

@@ -106,12 +106,12 @@ const TOUR_STEPS: DriveStep[] = [
     },
   },
   {
-    element: '[data-tour="variant-picker"]',
+    element: '[data-tour="theme-toggle"]',
     popover: {
-      title: 'Theme Variants',
+      title: 'Light & Dark',
       description:
-        'Switch between 5 visual themes. Same tools, different aesthetic.',
-      side: 'right',
+        'Toggle between the dark analyst theme and a light, print-friendly view. Your choice is remembered.',
+      side: 'left',
       align: 'center',
     },
   },

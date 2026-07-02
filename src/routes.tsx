@@ -11,8 +11,6 @@ import { DocsPage } from './pages/DocsPage';
 import { KACPage } from './pages/KACPage';
 import { QoICPage } from './pages/QoICPage';
 
-export type RouteLabelVariant = 'default' | 'v1' | 'v2' | 'v3' | 'v4' | 'v5';
-
 export interface AppRouteDefinition {
   id: string;
   path?: string;
@@ -20,7 +18,7 @@ export interface AppRouteDefinition {
   element: ReactElement;
   nav?: {
     icon: LucideIcon;
-    labels: Record<RouteLabelVariant, string>;
+    label: string;
     tourId?: string;
   };
 }
@@ -32,14 +30,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <HomePage />,
     nav: {
       icon: Home,
-      labels: {
-        default: 'Projects',
-        v1: 'Projects',
-        v2: 'projects',
-        v3: 'Projects',
-        v4: 'BASE OPS',
-        v5: 'NEXUS',
-      },
+      label: 'Projects',
     },
   },
   {
@@ -48,14 +39,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <ACHPage />,
     nav: {
       icon: Grid3X3,
-      labels: {
-        default: 'ACH Matrix',
-        v1: 'ACH Matrix',
-        v2: 'ach_matrix',
-        v3: 'ACH Matrix',
-        v4: 'ACH MATRIX',
-        v5: 'ACH//GRID',
-      },
+      label: 'ACH Matrix',
     },
   },
   {
@@ -69,14 +53,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <KACPage />,
     nav: {
       icon: ListChecks,
-      labels: {
-        default: 'Key Assumptions',
-        v1: 'Key Assumptions',
-        v2: 'key_assumptions',
-        v3: 'Key Assumptions',
-        v4: 'ASSUMPTIONS',
-        v5: 'ASSUMPTIONS//AUDIT',
-      },
+      label: 'Key Assumptions',
     },
   },
   {
@@ -85,14 +62,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <QoICPage />,
     nav: {
       icon: ShieldCheck,
-      labels: {
-        default: 'Info Quality',
-        v1: 'Info Quality',
-        v2: 'info_quality',
-        v3: 'Info Quality',
-        v4: 'SOURCE QC',
-        v5: 'QOIC//AUDIT',
-      },
+      label: 'Info Quality',
     },
   },
   {
@@ -101,14 +71,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <BiasPage />,
     nav: {
       icon: Brain,
-      labels: {
-        default: 'Bias Checklist',
-        v1: 'Bias Checklist',
-        v2: 'bias_check',
-        v3: 'Bias Checklist',
-        v4: 'BIAS CHECK',
-        v5: 'BIAS//SCAN',
-      },
+      label: 'Bias Checklist',
       tourId: 'bias-nav',
     },
   },
@@ -118,14 +81,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <IOCPage />,
     nav: {
       icon: Crosshair,
-      labels: {
-        default: 'IOC Extractor',
-        v1: 'IOC Extractor',
-        v2: 'ioc_extract',
-        v3: 'IOC Extractor',
-        v4: 'IOC EXTRACT',
-        v5: 'IOC//TRACE',
-      },
+      label: 'IOC Extractor',
     },
   },
   {
@@ -134,14 +90,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <DiamondPage />,
     nav: {
       icon: Diamond,
-      labels: {
-        default: 'Diamond Model',
-        v1: 'Diamond Model',
-        v2: 'diamond_model',
-        v3: 'Diamond Model',
-        v4: 'DIAMOND MODEL',
-        v5: 'DIAMOND//MAP',
-      },
+      label: 'Diamond Model',
     },
   },
   {
@@ -150,14 +99,7 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <ExportPage />,
     nav: {
       icon: Download,
-      labels: {
-        default: 'Export',
-        v1: 'Export',
-        v2: 'export',
-        v3: 'Export',
-        v4: 'EXFIL DATA',
-        v5: 'EXTRACT',
-      },
+      label: 'Export',
       tourId: 'export-nav',
     },
   },
@@ -167,25 +109,18 @@ export const APP_ROUTES: AppRouteDefinition[] = [
     element: <DocsPage />,
     nav: {
       icon: BookOpen,
-      labels: {
-        default: 'Docs',
-        v1: 'Docs',
-        v2: 'docs',
-        v3: 'Docs',
-        v4: 'FIELD MANUAL',
-        v5: 'CODEX',
-      },
+      label: 'Docs',
       tourId: 'docs-nav',
     },
   },
 ];
 
-export function getNavRoutes(variant: RouteLabelVariant, basePath = '') {
+export function getNavRoutes() {
   return APP_ROUTES.filter((route) => route.nav).map((route) => ({
     id: route.id,
-    to: route.index ? `${basePath}/` : `${basePath}/${route.path}`,
+    to: route.index ? '/' : `/${route.path}`,
     icon: route.nav!.icon,
-    label: route.nav!.labels[variant],
+    label: route.nav!.label,
     tourId: route.nav!.tourId,
   }));
 }

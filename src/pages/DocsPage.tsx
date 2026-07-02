@@ -416,8 +416,8 @@ export function DocsPage() {
                 a: 'Only for the initial page load (to fetch fonts and the driver.js tour library from CDN). After that, everything works offline.',
               },
               {
-                q: 'What are the different visual themes?',
-                a: 'Intel Workbench ships with 5 themed variants plus the original default layout. Each provides the same analytical tools in a different visual style — choose the one that fits your workflow or preference from the landing page.',
+                q: 'Can I change the appearance?',
+                a: 'Intel Workbench has one interface with a light and dark mode. Use the sun/moon toggle in the top bar to switch; the dark theme suits on-screen analysis and the light theme is print-friendly. Your choice is remembered between visits.',
               },
             ].map((item) => (
               <div key={item.q}>

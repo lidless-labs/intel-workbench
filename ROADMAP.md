@@ -40,7 +40,7 @@ These items remain on the longer-horizon backlog and are not gated by SAT delive
 - **Threat Feed Import**: Ingest OTX pulses, STIX bundles, or CSV IOC lists to auto-populate evidence and IOC entries.
 - **Entity Relationship Graph**: Force-directed graph (d3-force) connecting adversaries, infrastructure, capabilities, and victims across projects. Extends Diamond Model into full link analysis.
 - **Cross-Project Correlation**: Flag shared IOCs and entities across multiple analyses. Surface patterns and overlaps between investigations.
-- **Default Theme with Settings Toggle**: Launch directly into the primary theme; move variant selection to a settings panel.
+- ~~**Default Theme with Settings Toggle**: Launch directly into the primary theme; move variant selection to a settings panel.~~ **Done** — the app consolidated to a single UI (`AppShell`) with a light/dark toggle; the five theme variants and the picker were removed.
 - **Shareable Read-Only Snapshots**: Export a project as a self-contained static HTML file for review without the full app.
 - **Pre-Loaded Case Studies**: Ship 2-3 real-world scenarios (SolarWinds, NotPetya, Log4Shell) so reviewers can explore the tool immediately.
 - **Optional Persistence Layer**: Supabase or SQLite backend for team collaboration alongside the existing localStorage mode.

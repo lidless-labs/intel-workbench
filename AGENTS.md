@@ -13,7 +13,7 @@ A change is done only when the verify script passes locally. Run it and report t
 - Public repo at github.com/solomonneas/intel-workbench, deployed to intel-workbench.vercel.app via Vercel (`vercel.json`, SPA rewrite to `index.html`).
 - Entry: `src/main.tsx` -> `src/App.tsx` -> `src/routes.tsx`. Pages in `src/pages/`, feature components in `src/components/<feature>/` (ach, kac, qoic, attack, bias, diamond, ioc, layout, shared).
 - State: Zustand with `persist` middleware in `src/store/useProjectStore.ts`, `useDiamondStore.ts`, `useIOCStore.ts`. `CURRENT_SCHEMA_VERSION` is defined in `src/store/types.ts`; per-store migrations live in `src/store/migrations.ts`; migration tests in `src/store/__tests__/migrations.test.ts`.
-- Five visual theme variants under `src/variants/v1..v5`, lazy-loaded, routed at `/v1/*` through `/v5/*`, picker at `/`.
+- Single UI: `App.tsx` renders one `AppShell` (`src/components/layout/AppShell.tsx`) with flat routes (`/`, `/ach`, `/kac`, `/qoic`, `/bias`, `/ioc`, `/diamond`, `/export`, `/docs`). A light/dark toggle in the top bar swaps `LIGHT_THEME`/`DARK_THEME` from `src/contexts/ThemeContext.tsx`, applied as `--iw-*` CSS variables. (The former `src/variants/v1..v5`, `VariantPicker`, and `useBasePath` were removed when the app consolidated to one UI.)
 - Static datasets in `src/data/`: vendored ATT&CK Enterprise (`attack-enterprise.json`), bias taxonomy, SAT citations. SAT pages render the shared `CitationPanel` sourced from `src/data/citations.ts`.
 - Tests run via vitest (jsdom, setup in `src/test/setup.ts`) and live in `__tests__/` folders under `src/utils/` and `src/store/`. `npm run test:watch` for watch mode, `npm run format` for prettier.
 
@@ -28,8 +28,8 @@ A change is done only when the verify script passes locally. Run it and report t
 ## Working Rules (trigger -> rule)
 - Touching any type, interface, or exported API -> run `npm run typecheck` before claiming the change compiles.
 - Touching store files, persisted fields, or `migrations.ts` -> run `npm test` and confirm `migrations.test.ts` passes; add a test for any new migration step.
-- Touching routes, lazy imports, or variants -> run `npm run build`; typecheck alone does not catch broken dynamic imports.
-- Adding a new SAT or variant -> update the README's SAT table, feature list, and screenshots in the same change; the README is the public face of the project.
+- Touching routes or lazy imports -> run `npm run build`; typecheck alone does not catch broken dynamic imports.
+- Adding a new SAT -> update the README's SAT table, feature list, and screenshots in the same change; the README is the public face of the project.
 - Updating the ATT&CK dataset -> use the curl + `jq -f scripts/slim-attack.jq` recipe in that script's header comment. Never hand-edit `attack-enterprise.json`.
 - Citing or documenting config -> read the config file itself, not the docs (see Gotchas).
 - About to commit -> stage only the files you changed for this task; do not sweep in unrelated working-tree changes.

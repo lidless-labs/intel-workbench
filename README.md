@@ -48,7 +48,7 @@ See [ROADMAP.md](ROADMAP.md) for the four-phase delivery plan.
 - **ICD 203 Estimative Language** : Pick a likelihood band ("almost no chance" through "almost certainly") with the canonical 1-5%/5-20%/.../95-99% ranges per ODNI Analytic Standards; the preferred hypothesis displays a probability ribbon on the matrix and in Markdown exports
 - **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
 - **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation (includes ATT&CK technique IDs)
-- **5 Visual Themes** : Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
+- **Light & Dark Mode** : One interface with a sun/moon toggle. Dark suits on-screen analysis, light is print-friendly; the choice persists in localStorage
 - **In-App Guided Tour** : First-visit walkthrough powered by driver.js highlighting every major feature
 - **Built-In Documentation** : Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
 - **Offline-First** : All data persisted in localStorage; works without any server
@@ -64,15 +64,14 @@ Intel Workbench is a **single-page React application** with no backend dependenc
 Browser
   └─ React 18 (SPA, React Router v6)
        ├─ Zustand Store ← persist middleware → localStorage
-       ├─ ThemeContext (per-variant color tokens)
-       ├─ Pages: Home / ACH / Bias / Export / Docs
-       └─ 5 Variant Layouts (lazy-loaded)
+       ├─ ThemeContext (light/dark color tokens as CSS variables)
+       ├─ AppShell (sidebar + top bar)
+       └─ Pages: Home / ACH / KAC / QoIC / Bias / IOC / Diamond / Export / Docs
 ```
 
 - **State Management:** Zustand with `persist` middleware writes to `localStorage` under the key `intel-workbench-projects`
-- **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/default/*`) and a variant picker at `/`
-- **Theming:** `ThemeContext` provides color tokens per variant; components read them via `useTheme()`
-- **Code Splitting:** Variant layouts are `React.lazy()` loaded to keep the initial bundle small
+- **Routing:** React Router v6, flat routes under a single `AppShell` (`/`, `/ach`, `/kac`, `/qoic`, `/bias`, `/ioc`, `/diamond`, `/export`, `/docs`)
+- **Theming:** `ThemeModeProvider` swaps a light or dark `ThemeColors` palette, applied as `--iw-*` CSS variables; components read them via those variables or `useTheme()`
 
 ---
 
@@ -141,7 +140,8 @@ intel-workbench/
 │   └── vite.svg
 └── src/
     ├── main.tsx               # React root
-    ├── App.tsx                # Router + variant routes
+    ├── App.tsx                # AppShell + flat routes
+    ├── routes.tsx             # Route + nav definitions
     ├── index.css              # Tailwind layers + component classes
     ├── components/
     │   ├── ach/
@@ -150,10 +150,10 @@ intel-workbench/
     │   ├── bias/
     │   │   └── BiasChecklist.tsx
     │   ├── layout/
-    │   │   └── AppShell.tsx   # Default sidebar layout
+    │   │   └── AppShell.tsx   # Sidebar + top-bar layout (light/dark)
     │   └── GuidedTour.tsx     # driver.js onboarding tour
     ├── contexts/
-    │   └── ThemeContext.tsx    # Theme color provider
+    │   └── ThemeContext.tsx    # Light/dark theme provider (CSS variables)
     ├── data/
     │   ├── biasData.ts        # Cognitive bias catalog
     │   └── sampleProject.ts   # Sandworm sample data
@@ -162,51 +162,28 @@ intel-workbench/
     │   ├── ACHPage.tsx        # Matrix workspace
     │   ├── BiasPage.tsx       # Bias review
     │   ├── ExportPage.tsx     # JSON/Markdown export
-    │   ├── DocsPage.tsx       # In-app help & documentation
-    │   └── VariantPicker.tsx  # Theme selector landing
+    │   └── DocsPage.tsx       # In-app help & documentation
     ├── store/
     │   └── useProjectStore.ts # Zustand store (persisted)
     ├── types/
     │   └── index.ts           # TypeScript interfaces
-    ├── utils/
-    │   ├── achScoring.ts      # Scoring algorithms
-    │   ├── id.ts              # ID generator
-    │   └── useBasePath.ts     # Variant-aware navigation
-    └── variants/
-        ├── v1/Layout.tsx      # Langley (intel agency)
-        ├── v2/Layout.tsx      # Terminal (hacker)
-        ├── v3/Layout.tsx      # Analyst's Desk (clean)
-        ├── v4/Layout.tsx      # Stratcom (military)
-        └── v5/Layout.tsx      # Cyber Noir (cyberpunk)
+    └── utils/
+        ├── achScoring.ts      # Scoring algorithms
+        └── id.ts              # ID generator
 ```
 
 ---
 
-## 🎨 5 Variants
+## 🎨 Light & Dark
 
-Each variant wraps the same core pages in a unique visual identity:
+Intel Workbench has one interface with two color modes, toggled by the sun/moon control in the top bar:
 
-| Variant | Theme | Aesthetic |
-|---------|-------|-----------|
-| **v1 : Langley** | Intelligence Agency | Dark navy, gold accents, serif type, classified stamps |
-| **v2 : Terminal** | Hacker / OSINT | Pure black, matrix green, scanline overlay, monospace |
-| **v3 : Analyst's Desk** | Clean Professional | Light backgrounds, blue accents, content-first layout |
-| **v4 : Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
-| **v5 : Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
+| Mode | Palette | Best for |
+|------|---------|----------|
+| **Dark** | Deep navy surfaces, cyan accent | On-screen analysis and long sessions |
+| **Light** | Warm white surfaces, blue accent | Printing, screenshots, and bright rooms |
 
-<p align="center">
-  <img src="docs/screenshots/variant-v1-langley.png" width="49%" alt="Langley variant" />
-  <img src="docs/screenshots/variant-v2-terminal.png" width="49%" alt="Terminal variant" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/variant-v3-analysts-desk.png" width="49%" alt="Analyst's Desk variant" />
-  <img src="docs/screenshots/variant-v4-stratcom.png" width="49%" alt="Stratcom variant" />
-</p>
-<p align="center">
-  <img src="docs/screenshots/variant-v5-cyber-noir.png" width="60%" alt="Cyber Noir variant" />
-</p>
-
-All variants share the same Zustand store and page components. Switching themes is instant : just navigate back to the variant picker at `/`.
+Both modes are driven by the same `--iw-*` CSS variables, so every page and component stays consistent. The chosen mode persists in `localStorage` and follows your system preference on first visit.
 
 ---
 

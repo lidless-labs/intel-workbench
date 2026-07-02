@@ -12,12 +12,10 @@ import {
 import { useProjectStore } from '../store/useProjectStore';
 import { calculateAllScores, findPreferredHypothesis } from '../utils/achScoring';
 import { formatBandWithRange } from '../utils/icd203';
-import { useBasePath } from '../utils/useBasePath';
 
 export function ExportPage() {
   const store = useProjectStore();
   const navigate = useNavigate();
-  const basePath = useBasePath();
   const project = store.getActiveProject();
   const [copied, setCopied] = useState(false);
   const [exportFormat, setExportFormat] = useState<'json' | 'markdown'>('json');
@@ -35,7 +33,7 @@ export function ExportPage() {
           <p className="text-sm mb-4" style={{ color: 'var(--iw-text-muted)' }}>
             Select a project to export its data.
           </p>
-          <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
+          <button onClick={() => navigate('/')} className="btn-primary">
             Go to Projects
           </button>
         </div>
