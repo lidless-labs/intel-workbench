@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/intel-workbench-banner.jpg" alt="intel-workbench banner" width="900">
+  <img src="docs/assets/intel-workbench-social-preview.jpg" alt="intel-workbench social preview" width="900">
 </p>
 
 <h1 align="center">Intel Workbench</h1>
@@ -9,6 +9,8 @@
 </p>
 
 <p align="center">
+  <a href="https://lidless.dev/intel-workbench"><strong>Website</strong></a>
+  &nbsp;·&nbsp;
   <a href="https://intel-workbench.vercel.app">Live demo</a>
 </p>
 
@@ -24,7 +26,15 @@ Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool th
 
 ---
 
-## Quick Start
+## What it does
+
+Intel Workbench is an offline-first browser workbench for cyber threat intelligence analysis. It gives analysts a structured ACH matrix, MITRE ATT&CK evidence tagging, cognitive-bias review, ICD 203 estimative language, and JSON or Markdown export in one local React app. Project state persists in browser storage under `intel-workbench-projects`; no backend is required.
+
+Keywords: cyber threat intelligence, structured analytic techniques, Analysis of Competing Hypotheses, MITRE ATT&CK, ICD 203, cognitive bias, offline browser app.
+
+---
+
+## Install
 
 ### Prerequisites
 
