@@ -105,16 +105,6 @@ const TOUR_STEPS: DriveStep[] = [
       align: 'center',
     },
   },
-  {
-    element: '[data-tour="variant-picker"]',
-    popover: {
-      title: 'Theme Variants',
-      description:
-        'Switch between 5 visual themes. Same tools, different aesthetic.',
-      side: 'right',
-      align: 'center',
-    },
-  },
 ];
 
 function createDriverInstance(themeBg: string, onComplete?: () => void): Driver {

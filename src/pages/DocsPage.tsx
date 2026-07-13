@@ -413,11 +413,11 @@ export function DocsPage() {
               },
               {
                 q: 'Do I need an internet connection?',
-                a: 'Only for the initial page load (to fetch fonts and the driver.js tour library from CDN). After that, everything works offline.',
+                a: 'The initial page load may fetch Google Fonts. Analysis data and tools work without an application backend after the app has loaded.',
               },
               {
-                q: 'What are the different visual themes?',
-                a: 'Intel Workbench ships with 5 themed variants plus the original default layout. Each provides the same analytical tools in a different visual style — choose the one that fits your workflow or preference from the landing page.',
+                q: 'Which interface does Intel Workbench use?',
+                a: 'Intel Workbench uses the Analyst\'s Desk interface across the application. The former variant picker and alternate layouts were removed so design and accessibility work stays focused on one interface.',
               },
             ].map((item) => (
               <div key={item.q}>

@@ -22,7 +22,7 @@
   <img src="https://shieldcn.dev/badge/license-MIT-green.svg" alt="MIT License">
 </p>
 
-Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and eight distinct visual themes.
+Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Project data stays in browser storage, no backend is required, and the app uses one Analyst's Desk interface.
 
 ---
 
@@ -80,7 +80,7 @@ CI runs typecheck + tests + production build on every push (`.github/workflows/c
 - **ICD 203 Estimative Language** : Pick a likelihood band ("almost no chance" through "almost certainly") with the canonical 1-5%/5-20%/.../95-99% ranges per ODNI Analytic Standards; the preferred hypothesis displays a probability ribbon on the matrix and in Markdown exports
 - **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
 - **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation (includes ATT&CK technique IDs)
-- **8 Visual Themes** : Langley, Terminal, Analyst's Desk, Stratcom, Cyber Noir, Casefile Atlas, Ops Floor, and Blacksite Minimal
+- **Analyst's Desk Interface** : A focused, light workspace shared across projects, matrices, bias review, and exports
 - **In-App Guided Tour** : First-visit walkthrough powered by driver.js highlighting every major feature
 - **Built-In Documentation** : Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
 - **Offline-First** : All data persisted in localStorage; works without any server
@@ -96,15 +96,15 @@ Intel Workbench is a **single-page React application** with no backend dependenc
 Browser
   └─ React 18 (SPA, React Router v6)
        ├─ Zustand Store  persist middleware  localStorage
-       ├─ ThemeContext (per-variant color tokens)
+       ├─ ThemeContext (Analyst's Desk color tokens)
        ├─ Pages: Home / ACH / Bias / Export / Docs
-       └─ 8 Variant Layouts (lazy-loaded)
+       └─ Analyst's Desk Layout (lazy-loaded)
 ```
 
 - **State Management:** Zustand with `persist` middleware writes to `localStorage` under the key `intel-workbench-projects`
-- **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/v8/*`, `/default/*`) and a variant picker at `/`
-- **Theming:** `ThemeContext` provides color tokens per variant; components read them via `useTheme()`
-- **Code Splitting:** Variant layouts are `React.lazy()` loaded to keep the initial bundle small
+- **Routing:** React Router v6 routes the workbench pages through one Analyst's Desk layout
+- **Theming:** `ThemeContext` provides the layout's color tokens; components read them via `useTheme()`
+- **Code Splitting:** The Analyst's Desk layout is loaded with `React.lazy()`
 
 ---
 
@@ -119,7 +119,7 @@ Browser
 | **Routing** | React Router 6 | Client-side navigation |
 | **Icons** | Lucide React | Consistent icon set |
 | **Bundler** | Vite 7 | Dev server + build |
-| **Tour** | driver.js 1.3 (CDN) | Guided onboarding |
+| **Tour** | driver.js 1.4 | Guided onboarding |
 
 ---
 
@@ -127,7 +127,7 @@ Browser
 
 ```text
 intel-workbench/
-├── index.html                 # Entry point + CDN links
+├── index.html                 # Entry point + Google Fonts link
 ├── package.json
 ├── vite.config.ts
 ├── tailwind.config.js
@@ -136,7 +136,7 @@ intel-workbench/
 │   └── vite.svg
 └── src/
     ├── main.tsx               # React root
-    ├── App.tsx                # Router + variant routes
+    ├── App.tsx                # Lazy-loads the Analyst's Desk layout
     ├── index.css              # Tailwind layers + component classes
     ├── components/
     │   ├── ach/
@@ -157,8 +157,7 @@ intel-workbench/
     │   ├── ACHPage.tsx        # Matrix workspace
     │   ├── BiasPage.tsx       # Bias review
     │   ├── ExportPage.tsx     # JSON/Markdown export
-    │   ├── DocsPage.tsx       # In-app help & documentation
-    │   └── VariantPicker.tsx  # Theme selector landing
+    │   └── DocsPage.tsx       # In-app help & documentation
     ├── store/
     │   └── useProjectStore.ts # Zustand store (persisted)
     ├── types/
@@ -166,16 +165,10 @@ intel-workbench/
     ├── utils/
     │   ├── achScoring.ts      # Scoring algorithms
     │   ├── id.ts              # ID generator
-    │   └── useBasePath.ts     # Variant-aware navigation
+    │   └── useBasePath.ts     # Navigation base-path helper
     └── variants/
-        ├── v1/Layout.tsx      # Langley (intel agency)
-        ├── v2/Layout.tsx      # Terminal (hacker)
-        ├── v3/Layout.tsx      # Analyst's Desk (clean)
-        ├── v4/Layout.tsx      # Stratcom (military)
-        ├── v5/Layout.tsx      # Cyber Noir (cyberpunk)
-        ├── v6/Layout.tsx      # Casefile Atlas (evidence desk)
-        ├── v7/Layout.tsx      # Ops Floor (live cell)
-        └── v8/Layout.tsx      # Blacksite Minimal (brutalist)
+        ├── variantStyle.ts    # Shared layout style helpers
+        └── v3/Layout.tsx      # Analyst's Desk
 ```
 
 ---

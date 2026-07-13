@@ -9,10 +9,10 @@ Intel Workbench is a single-page React application with no backend dependencies.
 ### Frontend Only
 - **React 18** with TypeScript for type-safe component development
 - **Vite** for lightning-fast development and optimized production builds
-- **Tailwind CSS** for styling with 5 theme variants
+- **Tailwind CSS** for the Analyst's Desk interface
 - **Zustand** with `persist` middleware for localStorage persistence
 - **React Router v6** for client-side navigation
-- **driver.js** (CDN) for interactive guided tours
+- **driver.js** for interactive guided tours
 - **Lucide React** for consistent icon set
 - Runs on **port 5182**
 
@@ -180,15 +180,8 @@ Each bias has a text field for mitigation notes. Store in project under `biasNot
 ├─────────────────────────────────────────────┤
 │                                             │
 │  ┌─────────────────────────────────────┐   │
-│  │  VariantPicker (Variant Selector)   │   │
-│  │  Routes: / → /v1/*, /v2/*, etc.    │   │
-│  └─────────────────────────────────────┘   │
-│                                             │
-│  ┌─────────────────────────────────────┐   │
-│  │  VariantLayout (v1-v5)              │   │
-│  │  ├─ Sidebar                         │   │
-│  │  │  ├─ Project List                 │   │
-│  │  │  └─ Navigation                   │   │
+│  │  AnalystDeskLayout                  │   │
+│  │  ├─ Header Navigation               │   │
 │  │  └─ Main Content                    │   │
 │  │     ├─ HomePage                     │   │
 │  │     ├─ ACHPage                      │   │
@@ -199,7 +192,7 @@ Each bias has a text field for mitigation notes. Store in project under `biasNot
 │                                             │
 │  ┌─────────────────────────────────────┐   │
 │  │  ThemeContext                       │   │
-│  │  Provides color tokens per variant  │   │
+│  │  Provides Analyst's Desk tokens     │   │
 │  └─────────────────────────────────────┘   │
 │                                             │
 │  ┌─────────────────────────────────────┐   │
@@ -243,36 +236,23 @@ Each bias has a text field for mitigation notes. Store in project under `biasNot
 - Bias taxonomy reference
 - Keyboard shortcuts
 
-## 5 Variants
+## Interface
 
-Each variant wraps the same core pages in unique theming:
-
-| Variant | Theme | Aesthetic |
-|---------|-------|-----------|
-| **v1 (Langley)** | Dark navy, gold accents, serif type, classified stamps | Intelligence agency briefing room |
-| **v2 (Terminal)** | Pure black, matrix green, scanline overlay, monospace | Hacker / OSINT workspace |
-| **v3 (Analyst's Desk)** | Light backgrounds, blue accents, content-first | Clean professional analysis |
-| **v4 (Stratcom)** | OD green, amber accents, grid patterns, military time | Military command center |
-| **v5 (Cyber Noir)** | Neon cyan/magenta, glow effects, glass-morphism | Cyberpunk aesthetic |
-
-All variants:
-- Share the same Zustand store and scoring engine
-- Load color tokens from ThemeContext
-- Support full offline operation
-- Persist analysis independently (one localStorage key per variant choice)
-
-Switching themes is instant. All analysis data transfers seamlessly.
+Intel Workbench ships one Analyst's Desk layout. It wraps the shared pages,
+loads its color tokens from `ThemeContext`, and uses the same Zustand store and
+scoring engine throughout the application.
 
 ## Offline-First Architecture
 
-100% offline capability:
+After the initial page load, analysis works without an application backend:
 1. Load projects from localStorage on startup
 2. Create/edit projects entirely in-browser
 3. Export to JSON for backup
 4. Import from JSON to restore
 5. Share via URL-embedded JSON (localStorage hash)
 
-No internet connection required. No server calls. No registration. Complete privacy.
+Project data remains in browser storage unless the user exports it. Google Fonts
+may be requested from Google when the page first loads.
 
 ## localStorage Schema
 

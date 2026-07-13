@@ -10,7 +10,6 @@ Create a `.env` file in the project root:
 VITE_APP_PORT=5182
 VITE_STORAGE_KEY=intel-workbench-projects
 VITE_ENABLE_TOUR=true
-VITE_THEME_DEFAULT=v3
 ```
 
 | Variable | Description | Default |
@@ -18,20 +17,18 @@ VITE_THEME_DEFAULT=v3
 | `VITE_APP_PORT` | Frontend port | 5182 |
 | `VITE_STORAGE_KEY` | localStorage key for projects | intel-workbench-projects |
 | `VITE_ENABLE_TOUR` | Show guided tour on first visit | true |
-| `VITE_THEME_DEFAULT` | Default variant on first load | v3 (Analyst) |
 
-## Theme Variants
+## Interface and Routes
 
-Access Intel Workbench variants directly:
+Intel Workbench uses the Analyst's Desk interface at every route:
 
-- `http://localhost:5182/` - Variant selector landing page
-- `http://localhost:5182/v1/*` - Langley (Intelligence Agency)
-- `http://localhost:5182/v2/*` - Terminal (Hacker/OSINT)
-- `http://localhost:5182/v3/*` - Analyst's Desk (Clean Professional)
-- `http://localhost:5182/v4/*` - Stratcom (Military Command)
-- `http://localhost:5182/v5/*` - Cyber Noir (Cyberpunk)
-
-Your last-used variant is saved and loaded automatically on next visit.
+- `http://localhost:5182/` - Projects
+- `http://localhost:5182/ach` - ACH matrices
+- `http://localhost:5182/bias` - Bias checklist
+- `http://localhost:5182/ioc` - IOC extractor
+- `http://localhost:5182/diamond` - Diamond Model
+- `http://localhost:5182/export` - Import and export
+- `http://localhost:5182/docs` - Documentation
 
 ## Running the Application
 
@@ -70,9 +67,8 @@ Intel Workbench stores all analysis data in browser localStorage:
 | Key | Purpose | Typical Size |
 |-----|---------|--------------|
 | `intel-workbench-projects` | All projects, hypotheses, evidence, bias notes | 0.5-5MB |
-| `intel-workbench-theme-preference` | Last-used variant (v1-v5) | <1KB |
 
-No network calls. All data is local.
+Analysis data stays local. The initial page load may request Google Fonts.
 
 ### Maximum Storage
 
