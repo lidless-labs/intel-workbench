@@ -2,6 +2,9 @@
   <img src="docs/assets/intel-workbench-social-preview.jpg" alt="intel-workbench social preview" width="900">
 </p>
 
+<p align="center">
+  <a href="https://lidless.dev"><img src="docs/assets/marks/intel-workbench-circle.png" width="48" alt="Lidless Labs"></a>
+</p>
 <h1 align="center">Intel Workbench</h1>
 
 <p align="center">
@@ -219,3 +222,11 @@ Lower (more negative) scores indicate stronger support. The hypothesis with the 
 ## License
 
 MIT : see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center"><a href="https://lidless.dev">Part of <strong>Lidless Labs</strong></a> &middot; the eye does not close</p>
+
+<p align="center"><sub><strong>Threat Intelligence & OSINT:</strong> <a href="https://github.com/lidless-labs/cyberbrief">cyberbrief</a> &middot; <a href="https://github.com/lidless-labs/maltego-mcp">maltego-mcp</a> &middot; <a href="https://github.com/lidless-labs/vervet">vervet</a></sub></p>
+
+<p align="center"><sub><a href="https://lidless.dev">All tools</a> &middot; <a href="https://github.com/lidless-labs">Lidless Labs on GitHub</a></sub></p>
