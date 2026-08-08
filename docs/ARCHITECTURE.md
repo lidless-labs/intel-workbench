@@ -225,10 +225,9 @@ Each bias has a text field for mitigation notes. Store in project under `biasNot
 - Export bias analysis to report
 
 ### Export
-- JSON export (full backup)
-- Markdown export (formatted report)
-- Plain text summary
-- Share URL (via localStorage export in URL hash)
+- JSON export: copy to clipboard or download (full project backup for sharing or restore)
+- Markdown export: copy to clipboard or download (formatted analysis report)
+- JSON import: paste a previously exported project JSON to restore or merge (replaces same-ID projects)
 
 ### Documentation
 - ACH methodology explanation
@@ -247,9 +246,9 @@ scoring engine throughout the application.
 After the initial page load, analysis works without an application backend:
 1. Load projects from localStorage on startup
 2. Create/edit projects entirely in-browser
-3. Export to JSON for backup
-4. Import from JSON to restore
-5. Share via URL-embedded JSON (localStorage hash)
+3. Export to JSON (copy or download) for backup or sharing
+4. Export to Markdown (copy or download) for reports
+5. Import from pasted JSON on the Export page to restore or share across instances
 
 Project data remains in browser storage unless the user exports it. Google Fonts
 may be requested from Google when the page first loads.

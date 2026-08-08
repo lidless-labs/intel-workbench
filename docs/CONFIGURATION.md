@@ -81,44 +81,27 @@ For larger deployments, export old projects to JSON and clear localStorage.
 
 ## Project Backup and Restore
 
+All backup, sharing, and restore workflows run on the **Export** page (`/export`). Select a project first, then use the sections below.
+
 ### Exporting a Project
 
-1. Open project
-2. Click **Export Page** tab
-3. Choose format:
-   - **JSON** - Full backup with all metadata
-   - **Markdown** - Formatted report for sharing
-   - **Text** - Plain text summary
-
-### Exporting All Projects
-
-From the Home page, click **Settings** to access bulk export:
-
-```javascript
-// Manually export all projects
-const store = useProjectStore.getState();
-const backup = JSON.stringify(store.projects);
-// Save to file or send to server
-```
+1. Open the project you want to export
+2. Navigate to **Export** (`/export`)
+3. Choose a format:
+   - **JSON:** Full project backup with all metadata (for backup or sharing with another analyst)
+   - **Markdown:** Formatted report (for documentation or stakeholder review)
+4. Copy or download the output:
+   - **Copy to Clipboard:** Paste into email, chat, or a text file
+   - **Download File:** Save as `.json` or `.md` on disk
 
 ### Importing a Project
 
-1. From Home page, click **Import**
-2. Select JSON file from previous export
-3. Choose to append or replace existing projects
-4. Confirm import
+1. Navigate to **Export** (`/export`)
+2. Scroll to the **Import Project** section
+3. Paste a previously exported JSON project into the text area
+4. Click **Import**
 
-### URL-Based Sharing
-
-Export encodes project JSON in URL hash:
-
-1. Open project
-2. Click **Export**
-3. Choose **Share Link** (if available)
-4. Copy URL
-5. Share with colleague
-
-Recipient opens link, project loads from hash into localStorage. No server required.
+If a project with the same ID already exists, it is replaced. To share with a colleague, send them the JSON (via copy/paste, email, or a downloaded file) and have them paste it into Import on their instance.
 
 ## Bias Checklist Configuration
 
@@ -267,9 +250,9 @@ Enable in settings (coming soon). Current bindings:
 
 Intel Workbench stores data locally with no built-in sync. To use across devices:
 
-1. **Export on Device A** - JSON export
-2. **Transfer file** - Email, cloud storage, USB drive
-3. **Import on Device B** - Import JSON file
+1. **Export on Device A:** JSON copy or download from the Export page
+2. **Transfer:** Email, cloud storage, USB drive, or paste into chat
+3. **Import on Device B:** Paste the JSON into Import on the Export page
 
 Or manually manage via cloud storage:
 1. Export to OneDrive/Google Drive/Dropbox
