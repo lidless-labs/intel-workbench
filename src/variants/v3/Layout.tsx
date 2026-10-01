@@ -1,7 +1,7 @@
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
-import { useProjectStore } from '../../store/useProjectStore';
+import { useProjectStore, getProjectStorageError } from '../../store/useProjectStore';
 import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
 import { APP_ROUTES, getNavRoutes } from '../../routes';
 
@@ -20,6 +20,7 @@ const THEME: ThemeColors = {
 export default function AnalystDeskLayout() {
   const activeProject = useProjectStore((s) => s.getActiveProject());
   const location = useLocation();
+  const storageError = getProjectStorageError();
   const navItems = getNavRoutes('v3', '');
 
   return (
@@ -128,6 +129,11 @@ export default function AnalystDeskLayout() {
           </div>
         </header>
 
+        {storageError && (
+          <div role="alert" className="px-8 py-3 text-sm text-red-700" style={{ backgroundColor: THEME.surface }}>
+            {storageError}
+          </div>
+        )}
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-5xl mx-auto">
             <Routes>

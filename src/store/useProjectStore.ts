@@ -1,13 +1,53 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import type { Project, ACHMatrix, Evidence, Hypothesis, ConsistencyRating, BiasChecklist } from '../types';
+import { CURRENT_SCHEMA_VERSION } from '../types';
+import { migrateProjectState } from './migrations';
+import { parseEvidenceEnvelope, hasExplicitFormat, validateEvidenceRecord, recordTechniqueIds } from '../utils/evidenceRecord';
 import { generateId } from '../utils/id';
 import { isProbabilityBand } from '../utils/icd203';
 import { sampleProject } from '../data/sampleProject';
 
+let projectStorageError: string | null = null;
+export function getProjectStorageError(): string | null { return projectStorageError; }
+
+// Guard the original storage bytes independently of hydration. Zustand actions can
+// still run after a migration error, so rejecting migration alone cannot protect data.
+const projectStorage = createJSONStorage<ProjectStore>(() => {
+  const storage = localStorage;
+  let locked = false;
+  const inspectVersion = (raw: string | null) => {
+    if (raw === null) return;
+    try {
+      const version: unknown = JSON.parse(raw)?.version;
+      if (typeof version === 'number' && version !== 0 && version !== CURRENT_SCHEMA_VERSION) {
+        locked = true;
+        projectStorageError = `Stored projects use unsupported schema version ${version}. This Workbench cannot open them. Saved data is protected. Changes in this session cannot be saved. Use a compatible Workbench to open the saved data.`;
+      }
+    } catch { /* The persistence middleware reports malformed JSON during hydration. */ }
+  };
+  return {
+    getItem: (key: string) => {
+      const raw = storage.getItem(key);
+      inspectVersion(raw);
+      return raw;
+    },
+    setItem: (key: string, value: string) => {
+      inspectVersion(storage.getItem(key));
+      if (!locked) storage.setItem(key, value);
+    },
+    removeItem: (key: string) => {
+      inspectVersion(storage.getItem(key));
+      if (!locked) storage.removeItem(key);
+    },
+  };
+});
+
 export interface ImportResult {
   ok: boolean;
   reason?: string;
+  count?: number;
+  destination?: string;
 }
 
 interface ProjectStore {
@@ -52,6 +92,8 @@ interface ProjectStore {
   // Import/Export
   exportProject: (id: string) => string | null;
   importProject: (json: string) => ImportResult;
+  importEvidenceRecords: (json: string, projectId: string, matrixId: string | null) => ImportResult;
+  importData: (json: string, projectId: string, matrixId: string | null) => ImportResult;
 }
 
 const TECHNIQUE_ID_RE = /^T\d{4}(\.\d{3})?$/;
@@ -160,6 +202,8 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
         credibility: validCredRel.has(e.credibility as string) ? (e.credibility as Evidence['credibility']) : 'Medium',
         relevance: validCredRel.has(e.relevance as string) ? (e.relevance as Evidence['relevance']) : 'Medium',
         attackTechniques: sanitizeTechniqueIds(e.attackTechniques),
+        ...(Object.prototype.hasOwnProperty.call(e, 'originalRecord')
+          ? { originalRecord: validateEvidenceRecord(e.originalRecord) } : {}),
       });
     }
   }
@@ -241,8 +285,8 @@ function updateMatrixTimestamp(matrix: ACHMatrix): ACHMatrix {
   return { ...matrix, updatedAt: new Date().toISOString() };
 }
 
-export const useProjectStore = create<ProjectStore>()(
-  persist(
+export const useProjectStore = create<ProjectStore>()<[['zustand/persist', ProjectStore]]>((restoreState, baseGet, api) =>
+  persist<ProjectStore>(
     (set, get) => ({
       projects: [],
       activeProjectId: null,
@@ -592,7 +636,84 @@ export const useProjectStore = create<ProjectStore>()(
         return JSON.stringify(project, null, 2);
       },
 
+      importData: (json, projectId, matrixId) => {
+        try {
+          if (hasExplicitFormat(json)) {
+            return get().importEvidenceRecords(json, projectId, matrixId);
+          }
+          return get().importProject(json);
+        } catch (error) {
+          return { ok: false, reason: error instanceof Error ? error.message : 'Import failed.' };
+        }
+      },
+
+      importEvidenceRecords: (json, projectId, matrixId) => {
+        if (projectStorageError) return { ok: false, reason: projectStorageError };
+        try {
+          const envelope = parseEvidenceEnvelope(json);
+          const state = get();
+          const project = state.projects.find(p => p.id === projectId);
+          if (!project || state.activeProjectId !== projectId) {
+            return { ok: false, reason: 'Destination project is missing or no longer selected.' };
+          }
+          const existing = matrixId === null ? undefined : project.achMatrices.find(m => m.id === matrixId);
+          if (matrixId !== null && !existing) {
+            return { ok: false, reason: 'Destination matrix no longer exists in the selected project.' };
+          }
+          const now = new Date().toISOString();
+          // Fresh IDs cannot collide with existing entities or upstream record identities.
+          const used = new Set(envelope.records.map(r => r.id));
+          for (const p of state.projects) {
+            used.add(p.id);
+            for (const m of p.achMatrices) {
+              used.add(m.id);
+              for (const h of m.hypotheses) used.add(h.id);
+              for (const e of m.evidence) used.add(e.id);
+            }
+          }
+          const freshId = () => {
+            let id = generateId();
+            while (used.has(id)) id = generateId();
+            used.add(id);
+            return id;
+          };
+          const matrix: ACHMatrix = existing ?? {
+            id: freshId(), name: envelope.subject.title, hypotheses: [], evidence: [], ratings: {}, createdAt: now, updatedAt: now,
+          };
+          const evidence: Evidence[] = envelope.records.map(record => ({
+            id: freshId(),
+            source: `${record.source.tool}: ${record.source.ref ?? '(no reference recorded)'}`,
+            description: record.decision
+              ? `Verdict: ${record.decision.verdict}\nRationale: ${record.decision.rationale ?? '(not recorded)'}`
+              : 'No decision recorded.',
+            // Workbench neutral defaults, not upstream credibility/relevance judgments.
+            credibility: 'Medium', relevance: 'Medium',
+            attackTechniques: recordTechniqueIds(record), originalRecord: record,
+          }));
+          const updated: ACHMatrix = {
+            ...matrix, updatedAt: now, evidence: [...matrix.evidence, ...evidence],
+            ratings: { ...matrix.ratings, ...Object.fromEntries(evidence.map(e => [e.id, {}])) },
+          };
+          // Validation and construction complete before the single atomic append.
+          try {
+            set({ projects: state.projects.map(p => p.id === projectId ? {
+              ...p, updatedAt: now,
+              achMatrices: existing ? p.achMatrices.map(m => m.id === matrixId ? updated : m) : [...p.achMatrices, updated],
+            } : p) });
+          } catch (error) {
+            // persist writes after updating memory. Restore without another storage
+            // write if localStorage rejected the atomic write (for example, quota).
+            restoreState(state, true);
+            throw error;
+          }
+          return { ok: true, count: evidence.length, destination: matrix.name };
+        } catch (error) {
+          return { ok: false, reason: error instanceof Error ? error.message : 'Evidence import failed.' };
+        }
+      },
+
       importProject: (json) => {
+        if (projectStorageError) return { ok: false, reason: projectStorageError };
         let raw: unknown;
 
         try {
@@ -606,13 +727,29 @@ export const useProjectStore = create<ProjectStore>()(
         }
 
         const obj = raw as Record<string, unknown>;
+        if (Object.prototype.hasOwnProperty.call(obj, 'format')) {
+          return { ok: false, reason: 'Explicit format requires evidence envelope validation and a destination.' };
+        }
         const matrixCount = Array.isArray(obj.achMatrices) ? obj.achMatrices.length : 0;
         const checklistCount = Array.isArray(obj.biasChecklists) ? obj.biasChecklists.length : 0;
         if (matrixCount + checklistCount === 0) {
           return { ok: false, reason: 'Empty data: project has no ACH matrices or bias checklists.' };
         }
 
-        const project = normalizeImportedProject(raw);
+        let project: Project | null;
+        try {
+          // Reject invalid optional source copies even on rows native normalization would drop.
+          for (const matrix of Array.isArray(obj.achMatrices) ? obj.achMatrices : []) {
+            for (const e of Array.isArray(matrix?.evidence) ? matrix.evidence : []) {
+              if (e && typeof e === 'object' && Object.prototype.hasOwnProperty.call(e, 'originalRecord')) {
+                validateEvidenceRecord(e.originalRecord);
+              }
+            }
+          }
+          project = normalizeImportedProject(raw);
+        } catch (error) {
+          return { ok: false, reason: error instanceof Error ? error.message : 'Invalid originalRecord.' };
+        }
         if (!project) {
           return { ok: false, reason: 'Schema validation failure: missing required project fields.' };
         }
@@ -633,6 +770,9 @@ export const useProjectStore = create<ProjectStore>()(
     }),
     {
       name: 'intel-workbench-projects',
+      version: CURRENT_SCHEMA_VERSION,
+      storage: projectStorage,
+      migrate: (state, version) => migrateProjectState(state, version) as ProjectStore,
     }
-  )
+  )(restoreState, baseGet, api)
 );

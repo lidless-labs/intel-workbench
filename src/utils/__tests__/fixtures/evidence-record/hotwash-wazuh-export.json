@@ -1,0 +1,52 @@
+{
+  "format": "evidence-record",
+  "format_version": "1",
+  "generator": {
+    "name": "hotwash",
+    "version": "0.1.0"
+  },
+  "exported_at": "2026-10-01T17:48:41.504111+00:00",
+  "subject": {
+    "kind": "run",
+    "id": "2",
+    "title": "[Wazuh r5710] Failed login",
+    "incident_id": "wazuh:5710:001:1790876921493"
+  },
+  "records": [
+    {
+      "id": "wazuh-alert",
+      "source": {
+        "tool": "wazuh",
+        "observed_at": "2026-09-29T09:10:11+00:00",
+        "ref": "57cda51fd254b2aedb163e96e4d5588140a1929140ccbfc3c0f2a4ec04d9ccfe",
+        "raw": {
+          "id": "alert-42",
+          "timestamp": "2026-09-29T09:10:11Z",
+          "rule": {
+            "id": "5710",
+            "level": 8,
+            "description": "Failed login",
+            "groups": [
+              "authentication"
+            ]
+          },
+          "agent": {
+            "id": "001",
+            "name": "example-agent",
+            "ip": "192.0.2.42"
+          }
+        }
+      },
+      "enrichment": [],
+      "decision": null
+    }
+  ],
+  "closeout": {
+    "status": "open",
+    "resolution": null,
+    "impact": null,
+    "summary": null,
+    "closed_at": null,
+    "closed_by": null
+  }
+}
