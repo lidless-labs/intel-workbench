@@ -23,7 +23,11 @@ export function ExportPage() {
   const [exportFormat, setExportFormat] = useState<'json' | 'markdown'>('json');
   const [importText, setImportText] = useState('');
   const [importError, setImportError] = useState('');
-  const [importSuccess, setImportSuccess] = useState(false);
+  const [importSuccess, setImportSuccess] = useState('');
+  const [copyError, setCopyError] = useState('');
+  const [destination, setDestination] = useState<{ projectId: string; matrixId: string | null } | null>(null);
+  const matrixId = destination !== null && destination.projectId === project?.id
+    ? destination.matrixId : project?.achMatrices[0]?.id ?? null;
 
   if (!project) {
     return (
@@ -147,8 +151,6 @@ export function ExportPage() {
     return exportFormat === 'json' ? generateJSON() : generateMarkdown();
   };
 
-  const [copyError, setCopyError] = useState('');
-
   const handleCopy = async () => {
     const content = getExportContent();
     setCopyError('');
@@ -175,24 +177,31 @@ export function ExportPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleImport = () => {
+  const importJSON = (text: string, targetProjectId: string, targetMatrixId: string | null) => {
     setImportError('');
-    setImportSuccess(false);
-
-    if (!importText.trim()) {
-      setImportError('Please paste a JSON project export.');
+    setImportSuccess('');
+    if (!text.trim()) {
+      setImportError('Please paste JSON or select a JSON file.');
       return;
     }
-
-    const result = store.importProject(importText);
+    const result = store.importData(text, targetProjectId, targetMatrixId);
     if (result.ok) {
-      setImportSuccess(true);
+      setImportSuccess(result.count !== undefined
+        ? `Imported ${result.count} evidence records into ${result.destination}.`
+        : 'Project imported successfully.');
       setImportText('');
-      setTimeout(() => setImportSuccess(false), 3000);
-      return;
-    }
+    } else setImportError(result.reason ?? 'Import failed.');
+  };
 
-    setImportError(result.reason ?? 'Import failed.');
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    setImportError('');
+    setImportSuccess('');
+    // Capture the displayed destination before the asynchronous file read.
+    const targetProjectId = project.id;
+    const targetMatrixId = matrixId;
+    try { importJSON(await file.text(), targetProjectId, targetMatrixId); }
+    catch { setImportError('Could not read the selected JSON file.'); }
   };
 
   return (
@@ -265,12 +274,43 @@ export function ExportPage() {
       </div>
 
       <div className="card p-6 space-y-4">
-        <h3 className="text-sm font-semibold" style={{ color: 'var(--iw-text)' }}>Import Project</h3>
+        <h3 className="text-sm font-semibold" style={{ color: 'var(--iw-text)' }}>Import JSON</h3>
         <p className="text-xs" style={{ color: 'var(--iw-text-muted)' }}>
-          Paste a previously exported JSON project to import it. If a project with the same ID
-          exists, it will be replaced.
+          Paste JSON or choose a file. Native project exports replace a project with the same ID.
+          Evidence-record v1 exports append evidence to an ACH matrix in {project.name}.
         </p>
+        <label className="block text-xs space-y-2" style={{ color: 'var(--iw-text)' }}>
+          <span>Evidence destination in {project.name}</span>
+          <select
+            className="input-field"
+            value={matrixId === null ? 'new' : `matrix:${matrixId}`}
+            onChange={e => setDestination({ projectId: project.id, matrixId: e.target.value === 'new' ? null : e.target.value.slice(7) })}
+          >
+            {project.achMatrices.map(matrix => <option key={matrix.id} value={`matrix:${matrix.id}`}>{matrix.name}</option>)}
+            {matrixId !== null && !project.achMatrices.some(matrix => matrix.id === matrixId) && (
+              <option value={`matrix:${matrixId}`}>Selected matrix no longer exists</option>
+            )}
+            <option value="new">Create a new matrix from subject title</option>
+          </select>
+        </label>
+        {project.achMatrices.length === 0 && (
+          <p className="text-xs" style={{ color: 'var(--iw-text-muted)' }}>
+            This project has no ACH matrices. A successful evidence import creates one named from the subject title.
+          </p>
+        )}
+        <p className="text-xs" style={{ color: 'var(--iw-text-muted)' }}>
+          Imported credibility and relevance start at Medium, the Workbench neutral defaults.
+          These are not upstream judgments. Review them before analysis. JSON references are kept as data.
+        </p>
+        <label className="block text-xs space-y-2" style={{ color: 'var(--iw-text)' }}>
+          <span>Import JSON file (evidence envelopes up to 4 MiB)</span>
+          <input type="file" accept=".json,application/json" onChange={e => {
+            void handleFile(e.target.files?.[0]);
+            e.target.value = '';
+          }} />
+        </label>
         <textarea
+          aria-label="JSON to import"
           className="input-field font-mono text-xs resize-none"
           rows={6}
           placeholder="Paste JSON here..."
@@ -286,10 +326,10 @@ export function ExportPage() {
         {importSuccess && (
           <div className="flex items-center gap-2 text-xs text-intel-green">
             <Check size={14} />
-            Project imported successfully!
+            {importSuccess}
           </div>
         )}
-        <button onClick={handleImport} className="btn-secondary text-xs">
+        <button onClick={() => importJSON(importText, project.id, matrixId)} className="btn-secondary text-xs">
           <Upload size={14} className="inline mr-1" /> Import
         </button>
       </div>

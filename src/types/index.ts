@@ -1,3 +1,7 @@
+import type { EvidenceRecord } from '../utils/evidenceRecord';
+
+export const CURRENT_SCHEMA_VERSION = 1;
+
 export type ConsistencyRating = 'C' | 'I' | 'N' | 'NA';
 
 export type ConfidenceLevel = 'Low' | 'Moderate' | 'High';
@@ -24,6 +28,8 @@ export interface Evidence {
   credibility: 'High' | 'Medium' | 'Low';
   relevance: 'High' | 'Medium' | 'Low';
   attackTechniques?: string[];
+  /** Validated upstream record, including additive v1 fields and original IDs. */
+  originalRecord?: EvidenceRecord;
 }
 
 export interface Hypothesis {

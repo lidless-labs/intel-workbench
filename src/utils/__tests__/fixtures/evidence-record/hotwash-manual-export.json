@@ -1,0 +1,85 @@
+{
+  "format": "evidence-record",
+  "format_version": "1",
+  "generator": {
+    "name": "hotwash",
+    "version": "0.1.0"
+  },
+  "exported_at": "2026-10-01T17:48:41.345490+00:00",
+  "subject": {
+    "kind": "run",
+    "id": "1",
+    "title": "Suspicious host",
+    "incident_id": "INC-42"
+  },
+  "records": [
+    {
+      "id": "evidence:collect:0",
+      "source": {
+        "tool": "zeek",
+        "observed_at": "2026-09-29T10:12:13+02:00",
+        "ref": "sha256:5d27230d2a5f2e71fd9496d567494dc93262f101b4215046e18b0145ef121e41",
+        "raw": {
+          "filename": "ioc.txt",
+          "uploaded_at": "2026-10-01T17:48:41.289870+00:00",
+          "connector": null,
+          "action": null,
+          "source_tool": "zeek",
+          "source_ref": "https://example.invalid/opaque",
+          "observed_at": "2026-09-29T10:12:13+02:00",
+          "size": 13,
+          "node_id": "collect",
+          "sha256": "5d27230d2a5f2e71fd9496d567494dc93262f101b4215046e18b0145ef121e41"
+        }
+      },
+      "enrichment": [],
+      "decision": null
+    },
+    {
+      "id": "decision:decide",
+      "source": {
+        "tool": "hotwash",
+        "observed_at": "2026-09-29T12:34:56+00:00",
+        "ref": null,
+        "raw": {
+          "node_id": "decide",
+          "decision_taken": "Yes"
+        }
+      },
+      "enrichment": [],
+      "decision": {
+        "verdict": "unknown",
+        "rationale": "Yes",
+        "by": "event-analyst",
+        "at": "2026-09-29T12:34:56+00:00"
+      }
+    },
+    {
+      "id": "decision:same",
+      "source": {
+        "tool": "hotwash",
+        "observed_at": "2026-10-01T17:48:41+00:00",
+        "ref": null,
+        "raw": {
+          "node_id": "same",
+          "decision_taken": "Yes"
+        }
+      },
+      "enrichment": [],
+      "decision": {
+        "verdict": "unknown",
+        "rationale": "Yes",
+        "by": null,
+        "at": "2026-10-01T17:48:41+00:00"
+      }
+    }
+  ],
+  "closeout": {
+    "status": "closed",
+    "resolution": null,
+    "impact": null,
+    "summary": null,
+    "closed_at": null,
+    "closed_by": null
+  }
+}
