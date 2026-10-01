@@ -648,6 +648,7 @@ export const useProjectStore = create<ProjectStore>()<[['zustand/persist', Proje
       },
 
       importEvidenceRecords: (json, projectId, matrixId) => {
+        if (projectStorageError) return { ok: false, reason: projectStorageError };
         try {
           const envelope = parseEvidenceEnvelope(json);
           const state = get();
@@ -712,6 +713,7 @@ export const useProjectStore = create<ProjectStore>()<[['zustand/persist', Proje
       },
 
       importProject: (json) => {
+        if (projectStorageError) return { ok: false, reason: projectStorageError };
         let raw: unknown;
 
         try {

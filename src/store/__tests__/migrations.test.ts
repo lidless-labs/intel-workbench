@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { migrateProjectState } from '../migrations';
 import { sampleProject } from '../../data/sampleProject';
 import { CURRENT_SCHEMA_VERSION } from '../../types';
+import manual from '../../utils/__tests__/fixtures/evidence-record/hotwash-manual-export.json';
 
 const prior = () => ({
   projects: [{ ...structuredClone(sampleProject), custom: { kept: true },
@@ -61,4 +62,38 @@ describe('project persistence version 0 to 1', () => {
     expect(remove).not.toHaveBeenCalled();
     expect(write).not.toHaveBeenCalled();
   });
+  it.each(['evidence append', 'evidence new matrix', 'native replacement', 'native addition', 'routed evidence', 'routed native'])
+    ('refuses %s imports without changing memory or protected future-version bytes', async (route) => {
+      vi.resetModules();
+      const raw = JSON.stringify({ state: prior(), version: 2 });
+      let saved = raw;
+      const write = vi.fn((_key: string, value: string) => { saved = value; });
+      vi.stubGlobal('localStorage', { getItem: () => saved, setItem: write, removeItem: vi.fn() });
+      const { useProjectStore, getProjectStorageError } = await import('../useProjectStore');
+      const store = useProjectStore.getState();
+      const projectId = store.createProject('Temporary project', 'Cannot save');
+      const matrixId = store.createMatrix(projectId, 'Temporary matrix');
+      expect(useProjectStore.getState().activeProjectId).toBe(projectId);
+      const before = useProjectStore.getState();
+      const beforeJSON = JSON.stringify(before);
+      const changes = vi.fn();
+      const unsub = useProjectStore.subscribe(changes);
+      const evidenceJSON = JSON.stringify(manual);
+      const nativeJSON = route === 'native replacement'
+        ? JSON.stringify({ ...JSON.parse(store.exportProject(projectId)!), name: 'Replacement' })
+        : JSON.stringify(sampleProject);
+      const result = route.startsWith('routed')
+        ? store.importData(route === 'routed evidence' ? evidenceJSON : nativeJSON, projectId, matrixId)
+        : route.startsWith('native')
+          ? store.importProject(nativeJSON)
+          : store.importEvidenceRecords(evidenceJSON, projectId, route === 'evidence new matrix' ? null : matrixId);
+      unsub();
+      expect(getProjectStorageError()).toMatch(/unsupported schema version 2.*cannot.*saved/i);
+      expect(result).toEqual({ ok: false, reason: getProjectStorageError() });
+      expect(useProjectStore.getState()).toBe(before);
+      expect(JSON.stringify(useProjectStore.getState())).toBe(beforeJSON);
+      expect(changes).not.toHaveBeenCalled();
+      expect(saved).toBe(raw);
+      expect(write).not.toHaveBeenCalled();
+    });
 });
