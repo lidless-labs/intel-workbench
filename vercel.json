@@ -5,5 +5,11 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    {"source": "/", "has": [{"type": "host", "value": "intel-workbench.solomonneas.dev"}], "destination": "https://solomonneas.dev/projects/intel-workbench", "permanent": true},
+    {"source": "/:path*", "has": [{"type": "host", "value": "intel-workbench.solomonneas.dev"}], "destination": "https://solomonneas.dev/projects/intel-workbench", "permanent": true},
+    {"source": "/", "has": [{"type": "host", "value": "intel-workbench.vercel.app"}], "destination": "https://solomonneas.dev/projects/intel-workbench", "permanent": true},
+    {"source": "/:path*", "has": [{"type": "host", "value": "intel-workbench.vercel.app"}], "destination": "https://solomonneas.dev/projects/intel-workbench", "permanent": true}
   ]
 }
